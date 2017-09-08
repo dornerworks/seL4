@@ -298,7 +298,7 @@ menu "seL4 System"
 
     config ARM_HYPERVISOR_SUPPORT
         bool "Build as Hypervisor"
-        depends on ARM_CORTEX_A15
+        depends on ARM_CORTEX_A15 || ARM_CORTEX_A53
         default n
         help
             Utilise ARM virtualisation extensions to build the kernel as a hypervisor
