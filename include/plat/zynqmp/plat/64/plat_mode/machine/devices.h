@@ -24,5 +24,6 @@
 #define UART_PPTR                   0xffffffffffff0000
 #define GIC_DISTRIBUTOR_PPTR        0xffffffffffff3000
 #define GIC_CONTROLLER_PPTR         0xffffffffffff4000
+#define GIC_VCPUCTRL_PPTR           0xffffffffffff6000
 
 #endif /* __PLAT_MODE_MACHINE_DEVICES_H */

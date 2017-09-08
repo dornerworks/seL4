@@ -227,8 +227,14 @@ enum IRQConstants {
     maxIRQ = MAX_IRQ
 } platform_interrupt_t;
 
+#define INTERRUPT_VGIC_MAINTENANCE INTERRUPT_CORE_VIRT_MAINT
+
+#ifdef CONFIG_ARM_HYPERVISOR_SUPPORT
+#define KERNEL_TIMER_IRQ INTERRUPT_CORE_HYP_TIMER
+#else
 #define KERNEL_TIMER_IRQ INTERRUPT_CORE_VIRT_TIMER
 #define KERNEL_PMU_IRQ   INTERRUPT_PMU_COMM_0
+#endif
 
 #include <arch/machine/gic_pl390.h>
 

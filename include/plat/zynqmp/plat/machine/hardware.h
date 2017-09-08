@@ -23,6 +23,7 @@
 #include <types.h>
 #include <basic_types.h>
 #include <arch/linker.h>
+#include <arch/object/vcpu.h>
 #include <plat/machine.h>
 #include <plat/machine/devices.h>
 #include <plat_mode/machine/hardware.h>
@@ -41,6 +42,13 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
         ACPU_GIC_DISTRIBUTOR_PADDR,
         GIC_PL390_DISTRIBUTOR_PPTR,
         true  /* armExecuteNever */
+#ifdef CONFIG_ARM_HYPERVISOR_SUPPORT
+    },
+    {
+        ACPU_GIC_HYPCONTROL_PADDR,
+        GIC_VCPUCTRL_PPTR,
+        false
+#endif /* CONFIG_ARM_HYPERVISOR */
 #ifdef CONFIG_PRINTING
     },
     {
@@ -77,6 +85,10 @@ const p_region_t BOOT_RODATA dev_p_regs[] = {
 static inline void
 handleReservedIRQ(irq_t irq)
 {
+   if ((config_set(CONFIG_ARM_HYPERVISOR_SUPPORT)) && (irq == INTERRUPT_VGIC_MAINTENANCE)) {
+      VGICMaintenance();
+      return;
+   }
 }
 
 #endif /* !__PLAT_MACHINE_HARDWARE_H */

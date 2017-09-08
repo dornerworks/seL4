@@ -24,6 +24,7 @@
 #define UART_PPTR                   0xfff01000
 #define GIC_CONTROLLER_PPTR         0xfff03000
 #define GIC_DISTRIBUTOR_PPTR        0xfff04000
-#define ARM_DEBUG_MMAPPING_PPTR     0xfff05000
+#define GIC_VCPUCTRL_PPTR           0xfff06000
+#define ARM_DEBUG_MMAPPING_PPTR     0xfff08000
 
 #endif /* __PLAT_MODE_MACHINE_DEVICES_H */
