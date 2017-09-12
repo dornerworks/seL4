@@ -32,6 +32,10 @@ ifeq ($(PLAT), $(filter $(PLAT), exynos5 bcm2837 hikey tk1 tx1 zynqmp imx7 imx8)
 	ARCH_C_SOURCES += machine/generic_timer.c
 endif
 
+ifeq ($(PLAT), zynqmp)
+    ARCH_C_SOURCES += machine/smmu.c
+endif
+
 ifeq ($(GIC), 390)
     ARCH_C_SOURCES += machine/gic_pl390.c
 endif

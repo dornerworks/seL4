@@ -27,6 +27,7 @@
 #include <plat/machine.h>
 #include <plat/machine/devices.h>
 #include <plat_mode/machine/hardware.h>
+#include <arch/machine/smmu.h>
 #include <machine/io.h>
 
 #define physBase          0x00000000
