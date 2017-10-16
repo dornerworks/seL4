@@ -53,6 +53,14 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
         1,
         false
 #endif /* CONFIG_ARM_HYPERVISOR */
+#ifdef CONFIG_ARM_SMMU
+    },
+    {
+        SMMU_GPV_PADDR,
+        SMMU_PPTR,
+        (SMMU_SIZE >> PAGE_BITS),
+        false
+#endif /* CONFIG_ARM_SMMU */
 #ifdef CONFIG_PRINTING
     },
     {
@@ -89,6 +97,9 @@ const p_region_t BOOT_RODATA dev_p_regs[] = {
     { /* .start = */ DDRC_PADDR              , /* .end = */ DDRC_PADDR               + ( 1 << PAGE_BITS)},
     { /* .start = */ RTC_PADDR               , /* .end = */ RTC_PADDR                + ( 1 << PAGE_BITS)},
     { /* .start = */ GEM3_PADDR              , /* .end = */ GEM3_PADDR               + ( 1 << PAGE_BITS)},
+#ifndef CONFIG_ARM_SMMU
+    { /* .start = */ SMMU_GPV_PADDR          , /* .end = */ SMMU_GPV_PADDR           + SMMU_SIZE},
+#endif
 };
 
 /* Handle a platform-reserved IRQ. */
@@ -97,6 +108,11 @@ handleReservedIRQ(irq_t irq)
 {
    if ((config_set(CONFIG_ARM_HYPERVISOR_SUPPORT)) && (irq == INTERRUPT_VGIC_MAINTENANCE)) {
       VGICMaintenance();
+      return;
+   }
+
+   if (config_set(CONFIG_ARM_SMMU) && (irq == INTERRUPT_SMMU)) {
+      plat_smmu_handle_interrupt();
       return;
    }
 }

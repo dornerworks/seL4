@@ -26,11 +26,13 @@
 #define GIC_DISTRIBUTOR_PPTR        0xffffffffffff3000
 #define GIC_CONTROLLER_PPTR         0xffffffffffff4000
 #define GIC_VCPUCTRL_PPTR           0xffffffffffff6000
+#define SMMU_PPTR                   0xfffffffffff20000
 #else
 #define UART_PPTR                   0xffffffff0000
 #define GIC_DISTRIBUTOR_PPTR        0xffffffff3000
 #define GIC_CONTROLLER_PPTR         0xffffffff4000
 #define GIC_VCPUCTRL_PPTR           0xffffffff6000
+#define SMMU_PPTR                   0xfffffff20000
 #endif
 
 #endif /* __PLAT_MODE_MACHINE_DEVICES_H */

@@ -31,6 +31,9 @@
 /* These devices are used by the seL4 kernel. */
 #define UART_PADDR                  UART0_PADDR
 
+#define SMMU_SIZE                   SMMU_GPV_SIZE
+#define ARM_PLAT_NUM_CB             16
+
 #define ACPU_GIC_PADDR              0xF9000000
 #define ACPU_GIC_DISTRIBUTOR_PADDR  0xF9010000
 #define ACPU_GIC_CONTROLLER_PADDR   0xF9020000
@@ -185,6 +188,7 @@
 #define SERDES_PADDR                0xFD400000
 #define SIOU_PADDR                  0xFD3D0000
 #define SMMU_GPV_PADDR              0xFD800000
+#define SMMU_GPV_SIZE               0x00020000
 #define SMMU_REG_PADDR              0xFD5F0000
 #define SPI0_PADDR                  0xFF040000
 #define SPI1_PADDR                  0xFF050000

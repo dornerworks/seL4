@@ -26,5 +26,6 @@
 #define GIC_DISTRIBUTOR_PPTR        0xfff04000
 #define GIC_VCPUCTRL_PPTR           0xfff06000
 #define ARM_DEBUG_MMAPPING_PPTR     0xfff08000
+#define SMMU_PPTR                   0xfff20000
 
 #endif /* __PLAT_MODE_MACHINE_DEVICES_H */
