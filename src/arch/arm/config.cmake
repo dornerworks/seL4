@@ -232,6 +232,15 @@ config_option(KernelArmSMMUv2 ARM_SMMU_V2
     DEPENDS "KernelPlatformZynqMP"
 )
 
+config_option(KernelArmSMMUUnknownFault ARM_SMMU_UNKNOWN_STREAM_FAULT
+    "Enable faults for unknown Stream IDs \
+     Fault when a master with a stream ID that does not match any \
+     current SMMU mappings attempts to use the bus.  This prevents \
+     any surreptitious DMA transactions through the SMMU."
+    DEFAULT ON
+    DEPENDS "KernelArmSMMUv2"
+)
+
 config_option(KernelArmEnableA9Prefetcher ENABLE_A9_PREFETCHER
     "Enable Cortex-A9 prefetcher \
     Cortex-A9 has an L1 and L2 prefetcher. By default \

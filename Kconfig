@@ -359,6 +359,15 @@ menu "seL4 System"
         help
             Support for SystemMMU on TK1
 
+    config ARM_SMMU_UNKNOWN_STREAM_FAULT
+        bool "Enable faults for unknown Stream IDs"
+        depends on ARM_SMMU_V2
+        default y
+        help
+            Fault when a master with a stream ID that does not match any
+            current SMMU mappings attempts to use the bus.  This prevents
+            any surreptitious DMA transactions through the SMMU.
+
 source "$KERNEL_PATH/src/arch/arm/Kconfig"
 source "$KERNEL_PATH/src/plat/pc99/Kconfig"
 
