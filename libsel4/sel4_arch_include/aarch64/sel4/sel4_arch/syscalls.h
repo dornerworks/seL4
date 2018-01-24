@@ -3,11 +3,13 @@
  * Commonwealth Scientific and Industrial Research Organisation (CSIRO)
  * ABN 41 687 119 230.
  *
+ * Copyright 2018, DornerWorks
+ *
  * This software may be distributed and modified according to the terms of
  * the BSD 2-Clause license. Note that NO WARRANTY is provided.
  * See "LICENSE_BSD2.txt" for details.
  *
- * @TAG(DATA61_BSD)
+ * @TAG(DATA61_DORNERWORKS_BSD)
  */
 
 #ifndef __LIBSEL4_SEL4_SEL4_ARCH_SYSCALLS_H_
@@ -64,7 +66,11 @@ arm_sys_send(seL4_Word sys, seL4_Word dest, seL4_Word info_arg, seL4_Word mr0, s
     /* Perform the system call. */
     register seL4_Word scno asm("x7") = sys;
     asm volatile (
+#ifndef CONFIG_ARM_HYPERVISOR_SUPPORT
         "svc #0"
+#else
+        "hvc #0"
+#endif
         : "+r" (destptr), "+r" (msg0), "+r" (msg1), "+r" (msg2),
         "+r" (msg3), "+r" (info)
         : "r"(scno)
@@ -85,7 +91,11 @@ arm_sys_reply(seL4_Word sys, seL4_Word info_arg, seL4_Word mr0, seL4_Word mr1, s
     /* Perform the system call. */
     register seL4_Word scno asm("x7") = sys;
     asm volatile (
+#ifndef CONFIG_ARM_HYPERVISOR_SUPPORT
         "svc #0"
+#else
+        "hvc #0"
+#endif
         : "+r" (msg0), "+r" (msg1), "+r" (msg2), "+r" (msg3),
         "+r" (info)
         : "r"(scno)
@@ -101,7 +111,11 @@ arm_sys_send_null(seL4_Word sys, seL4_Word src, seL4_Word info_arg)
     /* Perform the system call. */
     register seL4_Word scno asm("x7") = sys;
     asm volatile (
+#ifndef CONFIG_ARM_HYPERVISOR_SUPPORT
         "svc #0"
+#else
+        "hvc #0"
+#endif
         : "+r" (destptr), "+r" (info)
         : "r"(scno)
     );
@@ -122,7 +136,11 @@ arm_sys_recv(seL4_Word sys, seL4_Word src, seL4_Word *out_badge, seL4_Word *out_
     /* Perform the system call. */
     register seL4_Word scno asm("x7") = sys;
     asm volatile (
+#ifndef CONFIG_ARM_HYPERVISOR_SUPPORT
         "svc #0"
+#else
+        "hvc #0"
+#endif
         : "=r" (msg0), "=r" (msg1), "=r" (msg2), "=r" (msg3),
         "=r" (info), "+r" (src_and_badge)
         : "r"(scno)
@@ -151,7 +169,11 @@ arm_sys_send_recv(seL4_Word sys, seL4_Word dest, seL4_Word *out_badge, seL4_Word
     /* Perform the system call. */
     register seL4_Word scno asm("x7") = sys;
     asm volatile (
+#ifndef CONFIG_ARM_HYPERVISOR_SUPPORT
         "svc #0"
+#else
+        "hvc #0"
+#endif
         : "+r" (msg0), "+r" (msg1), "+r" (msg2), "+r" (msg3),
         "+r" (info), "+r" (destptr)
         : "r"(scno)
@@ -170,7 +192,11 @@ arm_sys_null(seL4_Word sys)
 {
     register seL4_Word scno asm("x7") = sys;
     asm volatile (
+#ifndef CONFIG_ARM_HYPERVISOR_SUPPORT
         "svc #0"
+#else
+        "hvc #0"
+#endif
         : /* no outputs */
         : "r"(scno)
     );
