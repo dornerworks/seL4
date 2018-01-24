@@ -3,11 +3,13 @@
  * Commonwealth Scientific and Industrial Research Organisation (CSIRO)
  * ABN 41 687 119 230.
  *
+ * Copyright 2018, DornerWorks
+ *
  * This software may be distributed and modified according to the terms of
  * the GNU General Public License version 2. Note that NO WARRANTY is provided.
  * See "LICENSE_GPLv2.txt" for details.
  *
- * @TAG(DATA61_GPL)
+ * @TAG(DATA61_DORNERWORKS_GPL)
  */
 
 #ifndef __ARCH_FASTPATH_64_H
@@ -23,6 +25,8 @@
 #include <machine/fpu.h>
 #include <smp/lock.h>
 
+extern struct vspace_starting_levels vspace_sl;
+
 /* When building the fastpath the assembler in traps.S makes these
  * assumptions. Because compile_asserts are hard to do in assembler,
  * we place them here */
@@ -31,7 +35,7 @@ compile_assert(SysReplyRecv_Minus2, SysReplyRecv == -2)
 
 /* Use macros to not break verification */
 #define endpoint_ptr_get_epQueue_tail_fp(ep_ptr) TCB_PTR(endpoint_ptr_get_epQueue_tail(ep_ptr))
-#define cap_vtable_cap_get_vspace_root_fp(vtable_cap) PGDE_PTR(cap_page_global_directory_cap_get_capPGDBasePtr(vtable_cap))
+#define cap_vtable_cap_get_vspace_root_fp(vtable_cap) (vspace_root_t *)vspace_sl.top_base_ptr(vtable_cap)
 
 static inline void FORCE_INLINE
 switchToThread_fp(tcb_t *thread, vspace_root_t *vroot, pde_t stored_hw_asid)
@@ -65,7 +69,7 @@ mdb_node_ptr_set_mdbPrev_np(mdb_node_t *node_ptr, word_t mdbPrev)
 static inline bool_t
 isValidVTableRoot_fp(cap_t vspace_root_cap)
 {
-    return cap_capType_equals(vspace_root_cap, cap_page_global_directory_cap) && cap_page_global_directory_cap_get_capPGDIsMapped(vspace_root_cap);
+    return cap_capType_equals(vspace_root_cap, vspace_sl.top_cap) && vspace_sl.top_cap_mapped(vspace_root_cap);
 }
 
 /* This is an accelerated check that msgLength, which appears
@@ -124,10 +128,16 @@ fastpath_restore(word_t badge, word_t msgInfo, tcb_t *cur_thread)
         /* Restore thread's SPSR, LR, and SP */
         "ldp     x21, x22, [sp, %[SP_EL0]]  \n"
         "ldr     x23, [sp, %[SPSR_EL1]]     \n"
+
+#ifndef CONFIG_ARM_HYPERVISOR_SUPPORT
         "msr     sp_el0, x21                \n"
         "msr     elr_el1, x22               \n"
         "msr     spsr_el1, x23              \n"
-
+#else
+        "msr     sp_el1, x21                \n"
+        "msr     elr_el2, x22               \n"
+        "msr     spsr_el2, x23              \n"
+#endif
         /* Restore remaining registers */
         "ldp     x2,  x3,  [sp, #16 * 1]    \n"
         "ldp     x4,  x5,  [sp, #16 * 2]    \n"

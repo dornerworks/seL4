@@ -1,11 +1,12 @@
 /*
  * Copyright 2014, General Dynamics C4 Systems
+ * Copyright 2018, DornerWorks
  *
  * This software may be distributed and modified according to the terms of
  * the GNU General Public License version 2. Note that NO WARRANTY is provided.
  * See "LICENSE_GPLv2.txt" for details.
  *
- * @TAG(GD_GPL)
+ * @TAG(GD_DORNERWORKS_GPL)
  */
 
 #include <config.h>
@@ -97,7 +98,7 @@ fastpath_call(word_t cptr, word_t msgInfo)
 #endif
 
 #ifdef CONFIG_ARCH_AARCH64
-    stored_hw_asid.words[0] = cap_page_global_directory_cap_get_capPGDMappedASID(newVTable);
+    stored_hw_asid.words[0] = vspace_sl.top_cap_asid(newVTable);
 #endif
 
     /* let gcc optimise this out for 1 domain */
@@ -280,7 +281,7 @@ fastpath_reply_recv(word_t cptr, word_t msgInfo)
 #endif
 
 #ifdef CONFIG_ARCH_AARCH64
-    stored_hw_asid.words[0] = cap_page_global_directory_cap_get_capPGDMappedASID(newVTable);
+    stored_hw_asid.words[0] = vspace_sl.top_cap_asid(newVTable);
 #endif
 
     /* Ensure the original caller can be scheduled directly. */

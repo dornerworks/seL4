@@ -32,6 +32,10 @@ config KERNEL_MASTER
     bool
     default y
 
+config START_L1
+    bool
+    default n
+
 # Native word size of the current platform. This is primarily intended for use
 # in code generators that need to know, at generation-time, the word size of
 # the target platform.
@@ -244,6 +248,7 @@ menu "seL4 System"
             select ARM_CORTEX_A53
             select ARCH_ARM_V8A
             select HAVE_FPU if ARCH_AARCH64
+            select START_L1 if ARCH_AARCH64 && ARM_HYPERVISOR_SUPPORT
             help
                 Support for Xilinx Zynq UltraScale+ MPSoC platforms.
 

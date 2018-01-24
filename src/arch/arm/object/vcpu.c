@@ -200,13 +200,6 @@ void vcpu_restore_reg_range(vcpu_t *vcpu, word_t start, word_t end);
 #define VTCR_DS    BIT(22)       /* Hardware Management of Dirty State */
 #define VTCR_HA    BIT(21)       /* Hardware Access Flag */
 #define VTCR_VS    BIT(19)       /* VMID Size */
-#define VTCR_4G    (0 << 16)
-#define VTCR_64G   (1 << 16)
-#define VTCR_1T    (2 << 16)
-#define VTCR_4T    (3 << 16)
-#define VTCR_16T   (4 << 16)
-#define VTCR_256T  (5 << 16)
-#define VTCR_4P    (6 << 16)
 #define VTCR_4KB   (0 << 14)     /* Granule Size 4kB */
 #define VTCR_64KB  (1 << 14)     /* Granule Size 64kB */
 #define VTCR_16KB  (2 << 14)     /* Granule Size 16kB */
@@ -221,11 +214,10 @@ void vcpu_restore_reg_range(vcpu_t *vcpu, word_t start, word_t end);
 #define VTCR_IWBWA (1 << 8)
 #define VTCR_IWTRA (2 << 8)
 #define VTCR_IWBRA (3 << 8)
-#define VTCR_SL2   (0 << 6)     /* If TG0 is 0, Start at L2 */
-#define VTCR_SL1   (1 << 6)     /* If TG0 is 0, Start at L1 */
-#define VTCR_SL0   (2 << 6)     /* If TG0 is 0, Start at L0 */
 
+#define VTCR_SL(x)   ((2 - (x & 0x3)) << 6)
 #define VTCR_T0SZ(x) (x & 0x3f) /* Mask 6 Bits */
+#define VTCR_PA(x)   ((x & 0x7) << 16)
 
 /* note that the HCR_DC for ARMv8 disables S1 translation if enabled */
 #define HCR_COMMON ( HCR_TWE | HCR_VM | HCR_AMO | HCR_IMO | HCR_FMO | \
@@ -238,10 +230,24 @@ void vcpu_restore_reg_range(vcpu_t *vcpu, word_t start, word_t end);
 #define SCTLR_EL1_VM      SCTLR_EL1_NATIVE
 #define SCTLR_DEFAULT     SCTLR_EL1_NATIVE
 
-#ifdef CONFIG_ARM_CORTEX_A53
-/* VTCR Limited to 40-bit PA space on Cortex A53 */
-#define VTCR_EL2_NATIVE  VTCR_RES1 | VTCR_1T | VTCR_IS | VTCR_OWBWA | VTCR_IWBWA | VTCR_SL1 | VTCR_T0SZ(25)
-#endif
+#define VTCR_EL2_NATIVE  VTCR_RES1 | VTCR_IS | VTCR_OWBWA | VTCR_IWBWA | VTCR_4KB
+
+const struct {
+    unsigned int t0sz;
+    unsigned int sl0;
+} input_range_level[] = {
+    /* T0SZ minimum and SL0 maximum from ARM DDI 0487A.b Table D4-5 */
+    /* seL4 doesn't use concatenated tables */
+    [0] = { 32, 1 },
+    [1] = { 28, 1 },
+    [2] = { 25, 1 },
+    [3] = { 25, 1 },
+    [4] = { 20, 2 },
+    [5] = { 16, 2 },
+};
+
+#define PA_RANGE_MAX_SIZE sizeof(input_range_level) / sizeof(input_range_level[0])
+#define PA_RANGE_MASK     0xf
 
 #define FPU_FAULT  0x2000000
 #define WFI_FAULT  0x7e00000
@@ -596,11 +602,30 @@ setSCTLR(word_t sctlr)
 
 static unsigned int gic_vcpu_num_list_regs;
 
+/*
+ * Function to get the PA Range of a Platform running at EL2
+ */
+static uint32_t
+vcpu_get_pa_range(void)
+{
+    uint32_t parange;
+    MRS("id_aa64mmfr0_el1", parange);
+    parange &= PA_RANGE_MASK;
+
+    /* Don't support PA Ranges above 48-bits */
+    assert(parange <= PA_RANGE_MAX_SIZE);
+    return parange;
+}
+
 BOOT_CODE void
 vcpu_boot_init(void)
 {
+    uint32_t parange = vcpu_get_pa_range();
+    uint32_t vtcr = VTCR_EL2_NATIVE | VTCR_PA(parange) \
+                    | VTCR_SL(input_range_level[parange].sl0) | VTCR_T0SZ((input_range_level[parange].t0sz));
+
     /* set up the stage-2 translation control register */
-    writeVTCR(VTCR_EL2_NATIVE);
+    writeVTCR(vtcr);
     writeHCR(HCR_NATIVE);
 
     /* set the SCTLR_EL1 for running native seL4 threads */

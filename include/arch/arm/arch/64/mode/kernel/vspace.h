@@ -20,6 +20,15 @@
 
 #define activate_global_pd activate_kernel_vspace
 
+struct vspace_starting_levels {
+    int top_cap;
+    uint64_t (*top_cap_mapped)(cap_t cap);
+    uint64_t (*top_cap_asid)(cap_t cap);
+    uint64_t (*top_base_ptr)(cap_t cap);
+    void (*top_cap_ptr_map)(cap_t *cap_ptr, uint64_t v64);
+    void (*top_cap_ptr_mapped)(cap_t *cap_ptr, uint64_t v64);
+};
+
 /* ==================== BOOT CODE FINISHES HERE ==================== */
 
 bool_t CONST isVTableRoot(cap_t cap);

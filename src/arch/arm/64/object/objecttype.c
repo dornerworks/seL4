@@ -161,9 +161,14 @@ Arch_finaliseCap(cap_t cap, bool_t final)
 
     case cap_page_upper_directory_cap:
         if (final && cap_page_upper_directory_cap_get_capPUDIsMapped(cap)) {
+#if defined(CONFIG_ARM_HYPERVISOR_SUPPORT) && defined(CONFIG_START_L1)
+            deleteASID(cap_page_upper_directory_cap_get_capPUDMappedASID(cap),
+                       PGDE_PTR(cap_page_upper_directory_cap_get_capPUDBasePtr(cap)));
+#else
             unmapPageUpperDirectory(cap_page_upper_directory_cap_get_capPUDMappedASID(cap),
                                     cap_page_upper_directory_cap_get_capPUDMappedAddress(cap),
                                     PUDE_PTR(cap_page_upper_directory_cap_get_capPUDBasePtr(cap)));
+#endif
         }
         break;
 

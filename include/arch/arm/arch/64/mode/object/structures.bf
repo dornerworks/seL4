@@ -229,6 +229,25 @@ block pgde {
     field reserved                  2 -- must be 0b11
 }
 
+#ifdef CONFIG_ARM_HYPERVISOR_SUPPORT
+
+block pteS2 {
+    padding                         9
+    field XN                        2
+    field Contig                    1
+    field DBM                       1
+    padding                         3
+    field_high page_base_address    36
+    padding                         1
+    field AF                        1
+    field SH                        2
+    field S2AP                      2
+    field MemAttr                   4
+    field reserved                  2 -- 0b11 for 4kB page, 0b01 for 2MB/1GB Blocks
+}
+
+#endif /* CONFIG_ARM_HYPERVISOR_SUPPORT */
+
 block pude_1g {
     padding                         9
     field UXN                       1
