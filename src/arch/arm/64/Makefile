@@ -21,4 +21,5 @@ ARCH_C_SOURCES   += 64/c_traps.c \
                     64/idle.c
 
 ARCH_ASM_SOURCES += 64/head.S \
-                    64/traps.S
+                    64/traps.S \
+                    64/hyp_traps.S

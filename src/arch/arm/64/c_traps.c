@@ -3,11 +3,13 @@
  * Commonwealth Scientific and Industrial Research Organisation (CSIRO)
  * ABN 41 687 119 230.
  *
+ * Copyright 2018, DornerWorks
+ *
  * This software may be distributed and modified according to the terms of
  * the GNU General Public License version 2. Note that NO WARRANTY is provided.
  * See "LICENSE_GPLv2.txt" for details.
  *
- * @TAG(DATA61_GPL)
+ * @TAG(DATA61_DORNERWORKS_GPL)
  */
 
 #include <config.h>
@@ -40,9 +42,16 @@ void VISIBLE NORETURN restore_user_context(void)
         /* Restore thread's SPSR, LR, and SP */
         "ldp     x21, x22, [sp, %[SP_EL0]] \n"
         "ldr     x23, [sp, %[SPSR_EL1]]    \n"
+
+#ifndef CONFIG_ARM_HYPERVISOR_SUPPORT
         "msr     sp_el0, x21                \n"
         "msr     elr_el1, x22               \n"
         "msr     spsr_el1, x23              \n"
+#else
+        "msr     sp_el1, x21                \n"
+        "msr     elr_el2, x22               \n"
+        "msr     spsr_el2, x23              \n"
+#endif
 
         /* Restore remaining registers */
         "ldp     x0,  x1,  [sp, #16 * 0]    \n"

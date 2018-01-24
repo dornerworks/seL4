@@ -3,11 +3,13 @@
  * Commonwealth Scientific and Industrial Research Organisation (CSIRO)
  * ABN 41 687 119 230.
  *
+ * Copyright 2018, DornerWorks
+ *
  * This software may be distributed and modified according to the terms of
  * the GNU General Public License version 2. Note that NO WARRANTY is provided.
  * See "LICENSE_GPLv2.txt" for details.
  *
- * @TAG(DATA61_GPL)
+ * @TAG(DATA61_DORNERWORKS_GPL)
  */
 
 #ifndef __ARCH_MACHINE_REGISTERSET_64_H
@@ -36,13 +38,14 @@
 #define DAIFSET_MASK            0xf
 
 /* ESR register */
-#define ESR_EL1_EC_SHIFT        26
-#define ESR_EL1_EC_DABT_EL0     0x24   // Data abort from EL0 to EL1
-#define ESR_EL1_EC_DABT_EL1     0x25   // Data abort from EL1 to EL1
-#define ESR_EL1_EC_IABT_EL0     0x20   // Instruction abort from EL0 to EL1
-#define ESR_EL1_EC_IABT_EL1     0x21   // Instruction abort from EL1 to EL1
-#define ESR_EL1_EC_SVC64        0x15   // SVC instruction execution in AArch64 state
-#define ESR_EL1_EC_ENFP         0x7    // Access to Advanced SIMD or floating-point registers
+#define ESR_EC_SHIFT            26
+#define ESR_EC_DABT_LOW         0x24   // Data abort from a lower EL
+#define ESR_EC_DABT_SAME        0x25   // Data abort from the same EL
+#define ESR_EC_IABT_LOW         0x20   // Instruction abort from a lower EL
+#define ESR_EC_IABT_SAME        0x21   // Instruction abort from the same EL
+#define ESR_EC_SVC64            0x15   // SVC instruction execution in AArch64 state
+#define ESR_EC_HVC64            0x16   // HVC instruction execution in AArch64 state
+#define ESR_EC_ENFP             0x7    // Access to Advanced SIMD or floating-point registers
 
 /* ID_AA64PFR0_EL1 register */
 #define ID_AA64PFR0_EL1_FP      16     // HWCap for Floating Point
@@ -61,11 +64,11 @@
 #define PSTATE_EXTRA_FLAGS  PMODE_SERROR
 #endif
 
-#define PSTATE_USER         (PMODE_FIRQ | PMODE_EL0t | PSTATE_EXTRA_FLAGS)
-
 #ifdef CONFIG_ARM_HYPERVISOR_SUPPORT
+#define PSTATE_USER         (PMODE_FIRQ | PMODE_IRQ  | PMODE_DEBUG | PMODE_EL1h | PSTATE_EXTRA_FLAGS)
 #define PSTATE_IDLETHREAD   (PMODE_FIRQ | PMODE_EL2h | PSTATE_EXTRA_FLAGS)
 #else
+#define PSTATE_USER         (PMODE_FIRQ | PMODE_EL0t | PSTATE_EXTRA_FLAGS)
 #define PSTATE_IDLETHREAD   (PMODE_FIRQ | PMODE_EL1h | PSTATE_EXTRA_FLAGS)
 #endif
 
@@ -131,6 +134,11 @@ enum _register {
 
     /* End of GP registers, the following are additional kernel-saved state. */
 
+    /* Note: In Hyp Mode, EL2 is used for the Kernel and EL1 for the Applications.
+     *       This means that sp_el1, elr_el2, and spsr_el2 actually get stored in
+     *       these registers, but we keep the slots open for consistency around
+     *       the code.
+     */
     SP_EL0                      = 31,   /* 0xf8 */
     ELR_EL1                     = 32,   /* 0x100 */
     LR_svc                      = 32,
