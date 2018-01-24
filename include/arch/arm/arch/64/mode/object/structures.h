@@ -25,6 +25,11 @@
 
 typedef struct arch_tcb {
     user_context_t tcbContext;
+#ifdef CONFIG_ARM_HYPERVISOR_SUPPORT
+    /* Pointer to associated VCPU. NULL if not associated.
+     * tcb->tcbVCPU->vcpuTCB == tcb. */
+    struct vcpu* tcbVCPU;
+#endif
 } arch_tcb_t;
 
 enum vm_rights {
@@ -43,6 +48,7 @@ typedef word_t vm_rights_t;
 #define PD_INDEX_BITS       seL4_PageDirIndexBits
 #define PTE_SIZE_BITS       seL4_PageTableEntryBits
 #define PT_INDEX_BITS       seL4_PageTableIndexBits
+#define VCPU_SIZE_BITS      seL4_VCPUBits
 
 #define PT_INDEX_OFFSET     (seL4_PageBits)
 #define PD_INDEX_OFFSET     (PT_INDEX_OFFSET + PT_INDEX_BITS)
@@ -50,6 +56,10 @@ typedef word_t vm_rights_t;
 #define PGD_INDEX_OFFSET    (PUD_INDEX_OFFSET + PUD_INDEX_BITS)
 
 typedef pgde_t vspace_root_t;
+
+/* Generate a vcpu_t pointer from a vcpu block reference */
+#define VCPU_PTR(r)       ((struct vcpu *)(r))
+#define VCPU_REF(p)       ((word_t)(p))
 
 #define GET_PGD_INDEX(x)    (((x) >> (PGD_INDEX_OFFSET)) & MASK(PGD_INDEX_BITS))
 #define GET_PUD_INDEX(x)    (((x) >> (PUD_INDEX_OFFSET)) & MASK(PUD_INDEX_BITS))

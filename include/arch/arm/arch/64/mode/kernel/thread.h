@@ -24,11 +24,6 @@ sanitiseRegister(register_t reg, word_t v, bool_t archInfo)
 static inline bool_t CONST
 Arch_getSanitiseRegisterInfo(tcb_t *thread)
 {
-#ifdef CONFIG_ARM_HYPERVISOR_SUPPORT
-    /* When hyp support is implemented on aarch64 it will need to be determined whether
-     * a similar 'has VCPU' style knowledge is needed in sanitiseRegister or not */
-#error aarch64 support for hypervisor not implemented here
-#endif /* CONFIG_ARM_HYPERVISOR_SUPPORT */
     return 0;
 }
 

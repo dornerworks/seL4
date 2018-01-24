@@ -3,12 +3,16 @@
 -- Commonwealth Scientific and Industrial Research Organisation (CSIRO)
 -- ABN 41 687 119 230.
 --
+-- Copyright 2018, DornerWorks
+--
 -- This software may be distributed and modified according to the terms of
 -- the GNU General Public License version 2. Note that NO WARRANTY is provided.
 -- See "LICENSE_GPLv2.txt" for details.
 --
--- @TAG(DATA61_GPL)
+-- @TAG(DATA61_DORNERWORKS_GPL)
 --
+
+#include <config.h>
 
 -- Default base size: uint64_t
 base 64(48,1)
@@ -17,7 +21,7 @@ base 64(48,1)
 -- we need the structures to be visible here when building
 -- the capType
 #include <object/structures_64.bf>
- 
+
 ---- ARM-specific caps
 
 block frame_cap {
@@ -95,8 +99,18 @@ block asid_pool_cap {
     field_high capASIDPool          37
 }
 
+#ifdef CONFIG_ARM_HYPERVISOR_SUPPORT
+block vcpu_cap {
+    field capVCPUPtr                64
+
+    field capType                   5
+    padding                         59
+}
+#endif
+
 -- NB: odd numbers are arch caps (see isArchCap())
 tagged_union cap capType {
+
     -- 5-bit tag caps
     tag null_cap                    0
     tag untyped_cap                 2
@@ -118,6 +132,12 @@ tagged_union cap capType {
     tag page_global_directory_cap   9
     tag asid_control_cap            11
     tag asid_pool_cap               13
+
+#ifdef CONFIG_ARM_HYPERVISOR_SUPPORT
+    tag vcpu_cap                    15
+#endif /* CONFIG_ARM_HYPERVISOR_SUPPORT */
+
+
 }
 
 ---- Arch-independent object types
@@ -130,6 +150,26 @@ block VMFault {
     field seL4_FaultType            3
 }
 
+#ifdef CONFIG_ARM_HYPERVISOR_SUPPORT
+
+block VGICMaintenance {
+    padding         64
+    field idx        6
+    field idxValid   1
+    padding         25
+    padding         29
+    field seL4_FaultType  3
+}
+
+block VCPUFault {
+    padding         64
+    field hsr       32
+    padding         29
+    field seL4_FaultType  3
+}
+
+#endif
+
 -- VM attributes
 
 block vm_attributes {
@@ -138,6 +178,44 @@ block vm_attributes {
     field armParityEnabled          1
     field armPageCacheable          1
 }
+
+
+#ifdef CONFIG_ARM_HYPERVISOR_SUPPORT
+
+block virq_invalid {
+    padding             34
+    field virqType      2
+    padding             8
+    field virqEOIIRQEN  1
+    padding             19
+}
+
+block virq_active {
+    padding             34
+    field virqType      2
+    padding             8
+    field virqEOIIRQEN  1
+    padding             19
+}
+
+block virq_pending {
+    padding             33
+    field virqGroup     1
+    field virqType      2
+    field virqPriority  5
+    padding             3
+    field virqEOIIRQEN  1
+    padding             9
+    field virqIRQ       10
+}
+
+tagged_union virq virqType {
+    tag virq_invalid    0
+    tag virq_pending    1
+    tag virq_active     2
+}
+
+#endif /* CONFIG_ARM_HYPERVISOR_SUPPORT */
 
 ---- ARM-specific object types
 

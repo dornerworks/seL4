@@ -3,11 +3,13 @@
  * Commonwealth Scientific and Industrial Research Organisation (CSIRO)
  * ABN 41 687 119 230.
  *
+ * Copyright 2018, DornerWorks
+ *
  * This software may be distributed and modified according to the terms of
  * the BSD 2-Clause license. Note that NO WARRANTY is provided.
  * See "LICENSE_BSD2.txt" for details.
  *
- * @TAG(DATA61_BSD)
+ * @TAG(DATA61_DORNERWORKS_BSD)
  */
 
 #ifndef __LIBSEL4_SEL4_ARCH_FAULTS_H
@@ -47,6 +49,12 @@ seL4_getArchFault(seL4_MessageInfo_t tag)
                                       seL4_GetMR(seL4_VMFault_Addr),
                                       seL4_GetMR(seL4_VMFault_PrefetchFault),
                                       seL4_GetMR(seL4_VMFault_FSR));
+#ifdef CONFIG_ARM_HYPERVISOR_SUPPORT
+    case seL4_Fault_VGICMaintenance:
+        return seL4_Fault_VGICMaintenance_new(seL4_GetMR(seL4_VGICMaintenance_IDX));
+    case seL4_Fault_VCPUFault:
+        return seL4_Fault_VCPUFault_new(seL4_GetMR(seL4_VCPUFault_HSR));
+#endif /* CONFIG_ARM_HYPERVISOR_SUPPORT */
     default:
         return seL4_Fault_NullFault_new();
     }
