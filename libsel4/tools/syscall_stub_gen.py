@@ -4,11 +4,13 @@
 # Commonwealth Scientific and Industrial Research Organisation (CSIRO)
 # ABN 41 687 119 230.
 #
+# Copyright 2018, DornerWorks
+#
 # This software may be distributed and modified according to the terms of
 # the BSD 2-Clause license. Note that NO WARRANTY is provided.
 # See "LICENSE_BSD2.txt" for details.
 #
-# @TAG(DATA61_BSD)
+# @TAG(DATA61_DORNERWORKS_BSD)
 #
 
 #
@@ -58,6 +60,7 @@ WORD_SIZE_BITS_ARCH = {
     "ia64": 64,
     "x86_64": 64,
     "arm_hyp": 32,
+    "aarch64_hyp": 64,
 }
 
 MESSAGE_REGISTERS_FOR_ARCH = {
@@ -66,6 +69,7 @@ MESSAGE_REGISTERS_FOR_ARCH = {
     "ia32": 2,
     "x86_64": 4,
     "arm_hyp": 4,
+    "aarch64_hyp": 4,
 }
 
 WORD_CONST_SUFFIX_BITS = {
@@ -285,6 +289,21 @@ def init_arch_types(wordsize):
             CapType("seL4_ARM_IOSpace", wordsize),
             CapType("seL4_ARM_IOPageTable", wordsize),
             StructType("seL4_UserContext", wordsize * 17, wordsize),
+        ],
+
+        "aarch64_hyp" : [
+            Type("seL4_ARM_VMAttributes", wordsize, wordsize),
+            CapType("seL4_ARM_Page", wordsize),
+            CapType("seL4_ARM_PageTable", wordsize),
+            CapType("seL4_ARM_PageDirectory", wordsize),
+            CapType("seL4_ARM_PageUpperDirectory", wordsize),
+            CapType("seL4_ARM_PageGlobalDirectory", wordsize),
+            CapType("seL4_ARM_ASIDControl", wordsize),
+            CapType("seL4_ARM_ASIDPool", wordsize),
+            CapType("seL4_ARM_VCPU", wordsize),
+            CapType("seL4_ARM_IOSpace", wordsize),
+            CapType("seL4_ARM_IOPageTable", wordsize),
+            StructType("seL4_UserContext", wordsize * 34, wordsize),
         ],
 
         "ia32" : [
@@ -1024,4 +1043,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-
