@@ -95,7 +95,7 @@ enum IRQConstants {
     INTERRUPT_CAN1              = 56,
     INTERRUPT_LPD_APM           = 57,
     INTERRUPT_RTC_ALARM         = 58,
-    INTERRUPT_RTC_SECONDS       = 58,
+    INTERRUPT_RTC_SECONDS       = 59,
     INTERRUPT_CLKMON            = 60,
     INTERRUPT_IPI_CH7           = 61,
     INTERRUPT_IPI_CH8           = 62,

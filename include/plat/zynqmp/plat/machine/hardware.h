@@ -65,7 +65,8 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
 /* NOTE: Regions are not allowed to be adjacent! */
 const p_region_t BOOT_RODATA avail_p_regs[] = {
     /* 2 GiB */
-    { /* .start = */ 0x00000000, /* .end = */ 0x80000000 }
+    { /* .start = */ 0x00000000, /* .end = */ 0x80000000 },
+    { /* .start = */ 0x800000000, /* .end = */ 0x880000000 }
 };
 
 const p_region_t BOOT_RODATA dev_p_regs[] = {
@@ -79,6 +80,10 @@ const p_region_t BOOT_RODATA dev_p_regs[] = {
     { /* .start = */ I2C0_PADDR              , /* .end = */ I2C0_PADDR               + ( 1 << PAGE_BITS)},
     { /* .start = */ I2C1_PADDR              , /* .end = */ I2C1_PADDR               + ( 1 << PAGE_BITS)},
     { /* .start = */ GPIO_PADDR              , /* .end = */ GPIO_PADDR               + ( 1 << PAGE_BITS)},
+    { /* .start = */ IOU_SLCR_PADDR          , /* .end = */ IOU_SLCR_PADDR           + ( 1 << PAGE_BITS)},
+    { /* .start = */ DDRC_PADDR              , /* .end = */ DDRC_PADDR               + ( 1 << PAGE_BITS)},
+    { /* .start = */ RTC_PADDR               , /* .end = */ RTC_PADDR                + ( 1 << PAGE_BITS)},
+    { /* .start = */ GEM3_PADDR              , /* .end = */ GEM3_PADDR               + ( 1 << PAGE_BITS)},
 };
 
 /* Handle a platform-reserved IRQ. */
