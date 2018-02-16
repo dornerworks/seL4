@@ -94,7 +94,11 @@ isIOPDEValid(iopde_t *iopde)
 {
     assert(iopde != 0);
 
+#ifdef CONFIG_ARCH_AARCH64
+    return (iopde_ptr_get_pde_type(iopde) == 0x3);
+#else
     return (iopde_ptr_get_pdeType(iopde) == 0x3);
+#endif
 }
 
 static bool_t
