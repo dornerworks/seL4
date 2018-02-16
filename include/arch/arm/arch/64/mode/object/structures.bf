@@ -25,19 +25,30 @@ base 64(48,1)
 -- we need the structures to be visible here when building
 -- the capType
 #include <object/structures_64.bf>
+#include <config.h>
 
 ---- ARM-specific caps
 
 block frame_cap {
+#ifdef CONFIG_ARM_SMMU
+    padding                          1
+    field capFMappedASID             15
+#else
     field capFMappedASID             16
+#endif
     field_high capFBasePtr           48
 
     field capType                    5
     field capFSize                   2
     field_high capFMappedAddress     48
     field capFVMRights               2
+#ifdef CONFIG_ARM_SMMU
+    field capFIsIOSpace              1
+#else
+    padding                          1
+#endif
     field capFIsDevice               1
-    padding                          6
+    padding                          5
 }
 
 -- Forth-level page table
@@ -112,6 +123,38 @@ block vcpu_cap {
 }
 #endif
 
+#ifdef CONFIG_ARM_SMMU_V2
+-- IO space caps
+block io_space_cap {
+    field   capStreamID    16
+    padding                48
+
+    field   capType         5
+    padding                59
+}
+
+block io_space_capdata {
+    padding                48
+
+    field streamID         16
+}
+#endif
+
+#ifdef CONFIG_ARM_SMMU
+block io_page_table_cap (capType, capIOPTIsMapped, capIOPTASID, capIOPTBasePtr, capIOPTMappedAddress) {
+    field_high  capIOPTBasePtr          48
+    padding                             16
+
+    field capType                       5
+    padding                             11
+    field_high  capIOPTMappedAddress    28
+    padding                             4
+    field       capIOPTASID             7
+    field       capIOPTIsMapped         1
+    padding                             8
+}
+#endif
+
 -- NB: odd numbers are arch caps (see isArchCap())
 tagged_union cap capType {
 
@@ -137,11 +180,15 @@ tagged_union cap capType {
     tag asid_control_cap            11
     tag asid_pool_cap               13
 
+    -- we use the same names as for x86 IOMMU caps
+#ifdef CONFIG_ARM_SMMU
+    tag io_space_cap                15
+    tag io_page_table_cap           17
+#endif
+
 #ifdef CONFIG_ARM_HYPERVISOR_SUPPORT
-    tag vcpu_cap                    15
+    tag vcpu_cap                    21
 #endif /* CONFIG_ARM_HYPERVISOR_SUPPORT */
-
-
 }
 
 ---- Arch-independent object types
@@ -356,5 +403,27 @@ block ttbr {
     field asid                      16
     field_high base_address         48
 }
+
+#ifdef CONFIG_ARM_SMMU_V2
+block iopde {
+    padding                         16
+    field_high address              36
+    padding                         10
+    field pde_type                  2
+}
+
+block iopte {
+    padding                      9
+    field XN                     1
+    padding                      6
+    field_high address           36
+    padding                      1
+    field AF                     1
+    field SH                     2
+    field S2AP                   2
+    field Attr                   4
+    field pteType                2
+}
+#endif
 
 #include <arch/api/shared_types.bf>
