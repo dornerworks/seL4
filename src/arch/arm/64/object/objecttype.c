@@ -111,6 +111,25 @@ Arch_deriveCap(cte_t *slot, cap_t cap)
         return ret;
 #endif
 
+#ifdef CONFIG_ARM_SMMU
+    case cap_io_space_cap:
+        ret.cap = cap;
+        ret.status = EXCEPTION_NONE;
+        return ret;
+
+    case cap_io_page_table_cap:
+        if (cap_io_page_table_cap_get_capIOPTIsMapped(cap)) {
+            ret.cap = cap;
+            ret.status = EXCEPTION_NONE;
+        } else {
+            userError("Deriving a IOPT cap without an assigned IOASID");
+            current_syscall_error.type = seL4_IllegalOperation;
+            ret.cap = cap_null_cap_new();
+            ret.status = EXCEPTION_SYSCALL_ERROR;
+        }
+        return ret;
+#endif
+
     default:
         /* This assert has no equivalent in haskell,
          * as the options are restricted by type */
@@ -205,6 +224,13 @@ Arch_finaliseCap(cap_t cap, bool_t final)
 
     case cap_frame_cap:
         if (cap_frame_cap_get_capFMappedASID(cap)) {
+#ifdef CONFIG_ARM_SMMU
+            if (isIOSpaceFrameCap(cap)) {
+                unmapIOPage(cap);
+                break;
+            }
+#endif
+
             unmapPage(cap_frame_cap_get_capFSize(cap),
                       cap_frame_cap_get_capFMappedASID(cap),
                       cap_frame_cap_get_capFMappedAddress(cap),
@@ -216,6 +242,20 @@ Arch_finaliseCap(cap_t cap, bool_t final)
     case cap_vcpu_cap:
         if (final) {
             vcpu_finalise(VCPU_PTR(cap_vcpu_cap_get_capVCPUPtr(cap)));
+        }
+        break;
+#endif
+
+#ifdef CONFIG_ARM_SMMU
+    case cap_io_space_cap:
+        if (final) {
+            clearIOPageDirectory(cap);
+        }
+        break;
+
+    case cap_io_page_table_cap:
+        if (final && cap_io_page_table_cap_get_capIOPTIsMapped(cap)) {
+            deleteIOPageTable(cap);
         }
         break;
 #endif
@@ -290,6 +330,22 @@ bool_t CONST Arch_sameRegionAs(cap_t cap_a, cap_t cap_b)
         }
         break;
 #endif
+#ifdef CONFIG_ARM_SMMU
+#ifdef CONFIG_ARM_SMMU_V2
+    case cap_io_space_cap:
+        if (cap_get_capType(cap_b) == cap_io_space_cap) {
+            return cap_io_space_cap_get_capStreamID(cap_a) ==
+                   cap_io_space_cap_get_capStreamID(cap_b);
+        }
+        break;
+#endif
+    case cap_io_page_table_cap:
+        if (cap_get_capType(cap_b) == cap_io_page_table_cap) {
+            return cap_io_page_table_cap_get_capIOPTBasePtr(cap_a) ==
+                   cap_io_page_table_cap_get_capIOPTBasePtr(cap_b);
+        }
+        break;
+#endif
     }
 
     return false;
@@ -333,6 +389,10 @@ Arch_getObjectSize(word_t t)
     case seL4_ARM_VCPUObject:
         return VCPU_SIZE_BITS;
 #endif /* CONFIG_ARM_HYPERVISOR_SUPPORT */
+#ifdef CONFIG_ARM_SMMU
+    case seL4_ARM_IOPageTableObject:
+        return seL4_IOPageTableBits;
+#endif
     default:
         fail("Invalid object type");
         return 0;
@@ -350,6 +410,9 @@ Arch_createObject(object_t t, void *regionBase, word_t userSize, bool_t deviceMe
                    ARMSmallPage,          /* capFSize */
                    0,                     /* capFMappedAddress */
                    VMReadWrite,           /* capFVMRights */
+#ifdef CONFIG_ARM_SMMU
+                   0,                     /* capFIsIOSpace */
+#endif
                    !!deviceMemory         /* capFIsDevice */
                );
 
@@ -360,6 +423,9 @@ Arch_createObject(object_t t, void *regionBase, word_t userSize, bool_t deviceMe
                    ARMLargePage,          /* capFSize */
                    0,                     /* capFMappedAddress */
                    VMReadWrite,           /* capFVMRights */
+#ifdef CONFIG_ARM_SMMU
+                   0,                     /* capFIsIOSpace */
+#endif
                    !!deviceMemory         /* capFIsDevice */
                );
 
@@ -370,6 +436,9 @@ Arch_createObject(object_t t, void *regionBase, word_t userSize, bool_t deviceMe
                    ARMHugePage,           /* capFSize */
                    0,                     /* capFMappedAddress */
                    VMReadWrite,           /* capFVMRights */
+#ifdef CONFIG_ARM_SMMU
+                   0,                     /* capFIsIOSpace */
+#endif
                    !!deviceMemory         /* capFIsDevice */
                );
 
@@ -410,6 +479,10 @@ Arch_createObject(object_t t, void *regionBase, word_t userSize, bool_t deviceMe
         return cap_vcpu_cap_new(VCPU_REF(regionBase));
 #endif
 
+#ifdef CONFIG_ARM_SMMU
+    case seL4_ARM_IOPageTableObject:
+        return cap_io_page_table_cap_new(0, asidInvalid, (word_t)regionBase, 0);
+#endif
     default:
         fail("Arch_createObject got an API type or invalid object type");
     }
@@ -423,18 +496,25 @@ Arch_decodeInvocation(word_t label, word_t length, cptr_t cptr,
     /* The C parser cannot handle a switch statement with only a default
      * case. So we need to do some gymnastics to remove the switch if
      * there are no other cases */
-#if defined(CONFIG_ARM_HYPERVISOR_SUPPORT)
+#if defined(CONFIG_ARM_HYPERVISOR_SUPPORT) ||  defined(CONFIG_ARM_SMMU)
     switch (cap_get_capType(cap)) {
 #ifdef CONFIG_ARM_HYPERVISOR_SUPPORT
     case cap_vcpu_cap:
         return decodeARMVCPUInvocation(label, length, cptr, slot, cap, extraCaps, call, buffer);
 #endif /* CONFIG_ARM_HYPERVISOR_SUPPORT */
+#ifdef CONFIG_ARM_SMMU
+    case cap_io_space_cap:
+        return decodeARMIOSpaceInvocation(label, cap);
+    case cap_io_page_table_cap:
+        return decodeARMIOPTInvocation(label, length, slot, cap, extraCaps, buffer);
+#endif
     default:
         break;
 #else
-{
+    {
 #endif
-}
+    }
+
     return decodeARMMMUInvocation(label, length, cptr, slot, cap, extraCaps, buffer);
 }
 

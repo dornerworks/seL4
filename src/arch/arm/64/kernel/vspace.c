@@ -373,6 +373,9 @@ create_it_frame_cap(pptr_t pptr, vptr_t vptr, asid_t asid, bool_t use_large)
             frame_size,                    /* capFSize */
             vptr,                          /* capFMappedAddress */
             wordFromVMRights(VMReadWrite), /* capFVMRights */
+#ifdef CONFIG_ARM_SMMU
+            false,                         /* IOSpace */
+#endif
             false                          /* capFIsDevice */
         );
 }
@@ -1075,6 +1078,16 @@ bool_t CONST
 isValidVTableRoot(cap_t cap)
 {
     return isValidNativeRoot(cap);
+}
+
+bool_t CONST
+isIOSpaceFrameCap(cap_t cap)
+{
+#ifdef CONFIG_ARM_SMMU
+    return cap_frame_cap_get_capFSize(cap) == ARMSmallPage && cap_frame_cap_get_capFIsIOSpace(cap);
+#else
+    return false;
+#endif
 }
 
 void
@@ -2212,6 +2225,15 @@ decodeARMFrameInvocation(word_t invLabel, unsigned int length,
         vm_attributes_t attributes;
         findVSpaceForASID_ret_t find_ret;
 
+#ifdef CONFIG_ARM_SMMU
+        if (isIOSpaceFrameCap(cap)) {
+            userError("ARMPageRemap: Attempting to remap frame mapped into an IOSpace");
+            current_syscall_error.type = seL4_IllegalOperation;
+
+            return EXCEPTION_SYSCALL_ERROR;
+        }
+#endif
+
         if (unlikely(length < 2 || extraCaps.excaprefs[0] == NULL)) {
             current_syscall_error.type = seL4_TruncatedMessage;
             return EXCEPTION_SYSCALL_ERROR;
@@ -2278,9 +2300,24 @@ decodeARMFrameInvocation(word_t invLabel, unsigned int length,
         }
     }
 
-    case ARMPageUnmap:
+    case ARMPageUnmap: {
         setThreadState(NODE_STATE(ksCurThread), ThreadState_Restart);
-        return performPageInvocationUnmap(cap, cte);
+
+#ifdef CONFIG_ARM_SMMU
+        if (isIOSpaceFrameCap(cap)) {
+            return performPageInvocationUnmapIO(cap, cte);
+        } else
+#endif
+        {
+            return performPageInvocationUnmap(cap, cte);
+        }
+    }
+
+#ifdef CONFIG_ARM_SMMU
+    case ARMPageMapIO: {
+        return decodeARMIOMapInvocation(invLabel, length, cte, cap, extraCaps, buffer);
+    }
+#endif
 
     case ARMPageClean_Data:
     case ARMPageInvalidate_Data:
