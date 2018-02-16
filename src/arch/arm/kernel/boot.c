@@ -437,7 +437,17 @@ try_init_kernel(
             return false;
         }
     } else {
-        ndks_boot.bi_frame->ioSpaceCaps = S_REG_EMPTY;
+       ndks_boot.bi_frame->ioSpaceCaps = S_REG_EMPTY;
+    }
+
+    if (config_set(CONFIG_ARM_SMMU_V2)) {
+        if (plat_smmu_init() > 0) {
+            /* write IOSpace master cap */
+            write_slot(SLOT_PTR(pptr_of_cap(root_cnode_cap), seL4_CapIOSpace), master_iospace_cap());
+        }
+        else {
+           printf("SMMU Init Failed.\n");
+        }
     }
 
     /* Construct an initial address space with enough virtual addresses
