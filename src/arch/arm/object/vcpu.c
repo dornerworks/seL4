@@ -1745,6 +1745,9 @@ vcpu_switch(vcpu_t *new)
                 vcpu_save(armHSCurVCPU, armHSVCPUActive);
             }
             vcpu_restore(new);
+#ifdef CONFIG_ARCH_AARCH64
+            cleanInvalidateL1Caches();
+#endif
             armHSCurVCPU = new;
             armHSVCPUActive = true;
         } else if (unlikely(armHSVCPUActive)) {
