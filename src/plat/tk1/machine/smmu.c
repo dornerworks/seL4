@@ -143,7 +143,7 @@ make_ptb_data(uint32_t pd_base, bool_t read, bool_t write, bool_t nonsecure)
     return ret;
 }
 
-void
+static void
 plat_smmu_ptc_flush_all(void)
 {
     uint32_t cmd = PTC_FLUSH_ALL;
@@ -155,6 +155,7 @@ plat_smmu_tlb_flush_all(void)
 {
     uint32_t cmd = TLB_FLUSH_ALL;
     smmu_regs->smmu_tlb_flush = cmd;
+    plat_smmu_ptc_flush_all();
 }
 
 BOOT_CODE int
