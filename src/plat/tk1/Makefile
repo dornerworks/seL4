@@ -9,3 +9,4 @@
 #
 
 include ${SOURCE_ROOT}/src/plat/$(PLAT)/machine/Makefile
+include ${SOURCE_ROOT}/src/plat/$(PLAT)/object/Makefile
