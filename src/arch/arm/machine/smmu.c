@@ -169,6 +169,13 @@
 #define SMMU_ASID_IDX(asid) ((asid) - 1)
 #define SMMU_IDX_ASID(idx) ((idx) + 1)
 
+#ifdef CONFIG_ARCH_AARCH64
+#define SMMU_SIZE_BITS seL4_PUDBits
+#else
+#define SMMU_SIZE_BITS seL4_PDBits
+#endif
+
+
 struct smmu_entry
 {
    iopde_t* iopd;
@@ -261,7 +268,7 @@ BOOT_CODE int plat_smmu_init(void)
    /* Allocate a page directories per context bank */
    for (i = 0; i < ARM_PLAT_NUM_CB; ++i)
    {
-      iopde_t *pd = (iopde_t *)alloc_region(PD_INDEX_BITS);
+      iopde_t *pd = (iopde_t *)alloc_region(SMMU_SIZE_BITS);
 
       if (!pd)
       {
@@ -274,8 +281,8 @@ BOOT_CODE int plat_smmu_init(void)
       smmu_entries[i].sid    = 0xFF;
       smmu_entries[i].in_use = false;
 
-      memset(pd, 0, BIT(PD_INDEX_BITS));
-      cleanCacheRange_RAM((word_t)pd, ((word_t)pd + BIT(PD_INDEX_BITS)),
+      memset(pd, 0, BIT(SMMU_SIZE_BITS));
+      cleanCacheRange_RAM((word_t)pd, ((word_t)pd + BIT(SMMU_SIZE_BITS)),
                           addrFromPPtr(pd));
 
       /* Don't add to context bank, yet. */
@@ -460,8 +467,8 @@ void plat_smmu_release_asid(uint32_t asid)
    fentry = &smmu_entries[idx];
    iopd = fentry->iopd;
 
-   memset(iopd, 0, BIT(PD_INDEX_BITS));
-   cleanCacheRange_RAM((word_t)iopd, ((word_t)iopd + BIT(PD_INDEX_BITS)),
+   memset(iopd, 0, BIT(SMMU_SIZE_BITS));
+   cleanCacheRange_RAM((word_t)iopd, ((word_t)iopd + BIT(SMMU_SIZE_BITS)),
                        addrFromPPtr(iopd));
 
    fentry->sid    = 0xFF;
