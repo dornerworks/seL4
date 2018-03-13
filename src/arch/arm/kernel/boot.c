@@ -448,6 +448,12 @@ try_init_kernel(
         else {
            printf("SMMU Init Failed.\n");
         }
+
+#ifdef CONFIG_ARCH_AARCH64
+        ndks_boot.bi_frame->numIOPTLevels = 2;
+#else
+        ndks_boot.bi_frame->numIOPTLevels = 1;
+#endif
     }
 
     /* Construct an initial address space with enough virtual addresses
