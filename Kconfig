@@ -368,6 +368,14 @@ menu "seL4 System"
             current SMMU mappings attempts to use the bus.  This prevents
             any surreptitious DMA transactions through the SMMU.
 
+    config SMMU_S1_TRANS
+        bool "Use stage 1 mappings for SMMU"
+        depends on ARM_SMMU_V2
+        default n
+        help
+            Support stage 1 SMMU mappings.  Can be useful when the IPA space
+            is limited.
+
 source "$KERNEL_PATH/src/arch/arm/Kconfig"
 source "$KERNEL_PATH/src/plat/pc99/Kconfig"
 

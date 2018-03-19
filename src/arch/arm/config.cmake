@@ -241,6 +241,14 @@ config_option(KernelArmSMMUUnknownFault ARM_SMMU_UNKNOWN_STREAM_FAULT
     DEPENDS "KernelArmSMMUv2"
 )
 
+config_option(KernelArmSMMUUnknownFault ARM_SMMU_UNKNOWN_STREAM_FAULT
+     "Use stage 1 mappings for SMMU \
+      Support stage 1 SMMU mappings.  Can be useful when the IPA space \
+      is limited."
+    DEFAULT OFF
+    DEPENDS "KernelArmSMMUv2"
+)
+
 config_option(KernelArmEnableA9Prefetcher ENABLE_A9_PREFETCHER
     "Enable Cortex-A9 prefetcher \
     Cortex-A9 has an L1 and L2 prefetcher. By default \
