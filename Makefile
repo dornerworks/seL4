@@ -18,7 +18,7 @@
 SEL4_ARCH_LIST:=aarch32 aarch64 ia32 x86_64
 ARCH_LIST:=arm x86
 CPU_LIST:=arm1136jf-s ixp420 cortex-a7 cortex-a8 cortex-a9 cortex-a15 cortex-a53 cortex-a57
-PLAT_LIST:=imx31 pc99 ixp420 omap3 am335x exynos4 exynos5 imx6 imx7 apq8064 zynq7000 zynqmp allwinnerA20 tk1 hikey bcm2837 tx1
+PLAT_LIST:=imx31 pc99 ixp420 omap3 am335x exynos4 exynos5 imx6 imx7 imx8 apq8064 zynq7000 zynqmp allwinnerA20 tk1 hikey bcm2837 tx1
 ARMV_LIST:=armv6 armv7-a armv8-a
 
 ifndef SOURCE_ROOT
@@ -326,6 +326,9 @@ DEFINES += -DIMX6
 endif
 ifeq ($(PLAT),imx7)
 DEFINES += -DIMX7
+endif
+ifeq ($(PLAT),imx8)
+DEFINES += -DIMX8
 endif
 ifeq ($(PLAT),imx31)
 DEFINES += -DIMX31

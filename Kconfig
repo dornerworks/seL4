@@ -88,7 +88,7 @@ menu "seL4 System"
         bool
         default n
 
-    config ARM_CORTEX_A8 
+    config ARM_CORTEX_A8
         bool
         default n
 
@@ -233,6 +233,15 @@ menu "seL4 System"
             select PLAT_IMX7
             help
                 Support for iMX7 Sabre Dual.
+
+        config PLAT_IMX8
+           bool "iMX8 (NXP IMX8QM, ARMv8a, Cortex A53)"
+           depends on ARCH_AARCH64
+           select ARM_CORTEX_A53
+           select ARCH_ARM_V8A
+           select HAVE_FPU if ARCH_AARCH64
+           help
+                Support for NXP iMX8QM Board
 
         config PLAT_ZYNQ7000
             bool "Zynq-7000 (Xilinx ZC706, ARMv7a, Cortex A9)"
@@ -431,7 +440,7 @@ menu "seL4 System Parameters"
 
 config AARCH32_FPU_ENABLE_CONTEXT_SWITCH
     bool "Enable hardware VFP and SIMD context switch"
-    depends on ARCH_AARCH32 && !ARCH_ARM_V6 && !VERIFICATION_BUILD 
+    depends on ARCH_AARCH32 && !ARCH_ARM_V6 && !VERIFICATION_BUILD
     select HAVE_FPU
     default y
     help
@@ -454,7 +463,7 @@ config FPU_MAX_RESTORES_SINCE_SWITCH
 endmenu
 
 menu "Build Options"
-   
+
     config VERIFICATION_BUILD
         bool "Disable verification unfriendly features"
         default n
@@ -614,7 +623,7 @@ menu "Build Options"
         depends on ARCH_X86 || PLAT_HIKEY
         default n
         help
-            On ia32 platforms, this option disables the L2 hardware prefetcher, the L2 
+            On ia32 platforms, this option disables the L2 hardware prefetcher, the L2
             adjacent cache line prefetcher, the DCU prefetcher and the DCU IP prefetcher.
             On the cortex a53 this disables the L1 Data prefetcher.
 
@@ -624,7 +633,7 @@ menu "Build Options"
         range 1 7
         depends on PLAT_HIKEY && !DEBUG_DISABLE_PREFETCHERS
         help
-            Cortex A53 has an L1 Data prefetcher. This config options allows 
+            Cortex A53 has an L1 Data prefetcher. This config options allows
             the number of outstanding prefetcher to be set from a number from
             1 to 7. Note that a setting of 7 maps to 8 and 5 is the reset value.
 
