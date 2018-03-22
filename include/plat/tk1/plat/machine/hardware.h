@@ -32,11 +32,13 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
         /* map kernel device: GIC */
         GIC_CONTROLLER0_PADDR,
         GIC_CONTROLLER_PPTR,
+        1,
         true  /* armExecuteNever */
     },
     {
         GIC_DISTRIBUTOR_PADDR,
         GIC_DISTRIBUTOR_PPTR,
+        1,
         true  /* armExecuteNever */
 
 #ifdef CONFIG_ARM_HYPERVISOR_SUPPORT
@@ -44,6 +46,7 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
     {
         GIC_VCPUCTRL_PADDR,
         GIC_VCPUCTRL_PPTR,
+        1,
         false
 #endif /* CONFIG_ARM_HYPERVISOR */
 #ifdef CONFIG_ARM_SMMU
@@ -51,6 +54,7 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
     {
         MC_PADDR,
         SMMU_PPTR,
+        1,
         false
 #endif /* CONFIG_ARM_SMMU */
 #ifdef CONFIG_PRINTING
@@ -59,6 +63,7 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
         /* UART */
         UARTA_PADDR,
         UARTA_PPTR,
+        1,
         true
 #endif /* CONFIG_PRINTING */
     }

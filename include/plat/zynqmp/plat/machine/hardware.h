@@ -36,11 +36,13 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
         /* GIC */
         ACPU_GIC_CONTROLLER_PADDR,
         GIC_PL390_CONTROLLER_PPTR,
+        1,
         true  /* armExecuteNever */
     },
     {
         ACPU_GIC_DISTRIBUTOR_PADDR,
         GIC_PL390_DISTRIBUTOR_PPTR,
+        1,
         true  /* armExecuteNever */
 #ifdef CONFIG_ARM_HYPERVISOR_SUPPORT
     },
@@ -55,6 +57,7 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
         /*  UART */
         UART_PADDR,
         UART_PPTR,
+        1,
         true  /* armExecuteNever */
 #endif /* CONFIG_PRINTING */
     }

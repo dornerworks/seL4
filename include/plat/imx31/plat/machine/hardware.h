@@ -25,18 +25,21 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
         /*  EPIT */
         EPIT_PADDR,
         EPIT_PPTR,
+        1,
         true  /* armExecuteNever */
     },
     {
         /*  AVIC */
         AVIC_PADDR,
         AVIC_PPTR,
+        1,
         true  /* armExecuteNever */
     },
     {
         /*  L2CC */
         L2CC_PADDR,
         L2CC_PPTR,
+        1,
         true  /* armExecuteNever */
 
 #ifdef CONFIG_PRINTING
@@ -45,6 +48,7 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
         /*  UART */
         UART_PADDR,
         UART_PPTR,
+        1,
         true  /* armExecuteNever */
 #endif
     }

@@ -28,12 +28,14 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
         /* BCM2837 Interrupt controller */
         INTC_PADDR,
         INTC_PPTR,
+        1,
         true  /* armExecuteNever */
     },
     {
         /*  ARM Interrupt controller ? */
         ARM_LOCAL_PADDR,
         ARM_LOCAL_PPTR,
+        1,
         true  /* armExecuteNever */
 #ifdef CONFIG_PRINTING
     },
@@ -41,6 +43,7 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
         /*  UART */
         UART_PADDR,
         UART_PPTR,
+        1,
         true  /* armExecuteNever */
 #endif /* CONFIG_PRINTING */
     }

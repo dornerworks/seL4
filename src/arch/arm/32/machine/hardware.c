@@ -51,11 +51,14 @@ BOOT_CODE void
 map_kernel_devices(void)
 {
     for (int i = 0; i < ARRAY_SIZE(kernel_devices); i++) {
-        map_kernel_frame(kernel_devices[i].paddr,
-                         kernel_devices[i].pptr,
-                         VMKernelOnly,
-                         vm_attributes_new(kernel_devices[i].armExecuteNever,
-                                           false, false));
+        for (int j = 0; j < kernel_devices[i].nr_pages; j++)
+        {
+            map_kernel_frame(kernel_devices[i].paddr + (j*BIT(seL4_PageBits)),
+                             kernel_devices[i].pptr + (j*BIT(seL4_PageBits)),
+                             VMKernelOnly,
+                             vm_attributes_new(kernel_devices[i].armExecuteNever,
+                                               false, false));
+        }
+
     }
 }
-

@@ -51,6 +51,7 @@ typedef paddr_t seL4_PAddr;
 typedef struct kernel_frame {
     paddr_t paddr;
     pptr_t pptr;
+    word_t nr_pages;
     int armExecuteNever;
 } kernel_frame_t;
 

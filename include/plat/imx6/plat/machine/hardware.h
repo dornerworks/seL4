@@ -26,18 +26,21 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
         /*  GIC controller and private timers */
         ARM_MP_PADDR,
         ARM_MP_PPTR1,
+        1,
         true  /* armExecuteNever */
     },
     {
         /*  GIC distributor */
         ARM_MP_PADDR + BIT(PAGE_BITS),
         ARM_MP_PPTR2,
+        1,
         true  /* armExecuteNever */
     },
     {
         /*  L2CC */
         L2CC_PL310_PADDR,
         L2CC_PL310_PPTR,
+        1,
         true  /* armExecuteNever */
 
 #ifdef CONFIG_PRINTING
@@ -46,6 +49,7 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
         /*  UART */
         UART_PADDR,
         UART_PPTR,
+        1,
         true  /* armExecuteNever */
 #endif
     }

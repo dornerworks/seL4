@@ -24,17 +24,20 @@ static const BOOT_RODATA kernel_frame_t kernel_devices[] = {
         /*  timer used as PIT */
         TIMER_PADDR,
         TIMER_PPTR,
+        1,
         true  /* armExecuteNever */
     },
     {
         /*  GIC */
         GIC_CONTROLLER0_PADDR,
         GIC_CONTROLLER_PPTR,
+        1,
         true  /* armExecuteNever */
     },
     {
         GIC_DISTRIBUTOR_PADDR,
         GIC_DISTRIBUTOR_PPTR,
+        1,
         true  /* armExecuteNever */
 #ifdef CONFIG_PRINTING
     },
@@ -42,6 +45,7 @@ static const BOOT_RODATA kernel_frame_t kernel_devices[] = {
         /*  UART */
         UART_PADDR,
         UART_PPTR,
+        1,
         true  /* armExecuteNever */
 #endif /* CONFIG_PRINTING */
     }

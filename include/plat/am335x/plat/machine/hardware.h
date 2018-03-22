@@ -25,24 +25,28 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
         /*  DM Timer 0 */
         DMTIMER0_PADDR,
         DMTIMER0_PPTR,
+        1,
         true  /* armExecuteNever */
     },
     /*  INTC */
     {
         INTC_PADDR,
         INTC_PPTR,
+        1,
         true  /* armExecuteNever */
     },
     {
         /*  WDT1 */
         WDT1_PADDR,
         WDT1_PPTR,
+        1,
         true  /* armExecuteNever */
     },
     {
         /*  CMPER */
         CMPER_PADDR,
         CMPER_PPTR,
+        1,
         true  /* armExecuteNever */
 #ifdef CONFIG_PRINTING
     },
@@ -50,6 +54,7 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
         /*  UART */
         UART0_PADDR,
         UART0_PPTR,
+        1,
         true  /* armExecuteNever */
 #endif
     }

@@ -24,29 +24,34 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
         /*  Watch dog timer used as PIT */
         MCT_PADDR,
         MCT_PPTR,
+        1,
         true  /* armExecuteNever */
     },
     {
         /*  GIC */
         GIC_CONTROLLER0_PADDR,
         GIC_CONTROLLER_PPTR,
+        1,
         true  /* armExecuteNever */
     },
     {
         GIC_DISTRIBUTOR_PADDR,
         GIC_DISTRIBUTOR_PPTR,
+        1,
         true  /* armExecuteNever */
     },
     {
         /*  L2CC */
         L2CC_PADDR,
         L2CC_PPTR,
+        1,
         true  /* armExecuteNever */
 #ifdef CONFIG_PRINTING
     },
     {
         UART1_PADDR,
         UART_PPTR,
+        1,
         true
 #endif /* CONFIG_PRINTING */
     }

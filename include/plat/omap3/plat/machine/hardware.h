@@ -26,12 +26,14 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
         /*  GP Timer 9 */
         GPTIMER9_PADDR,
         GPTIMER9_PPTR,
+        1,
         true  /* armExecuteNever */
     },
     {
         /*  INTC */
         INTC_PADDR,
         INTC_PPTR,
+        1,
         true  /* armExecuteNever */
 #ifdef CONFIG_PRINTING
     },
@@ -39,6 +41,7 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
         /*  UART */
         UART3_PADDR,
         UART3_PPTR,
+        1,
         true  /* armExecuteNever */
 #endif
     }
