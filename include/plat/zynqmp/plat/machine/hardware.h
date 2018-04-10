@@ -49,6 +49,7 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
     {
         ACPU_GIC_HYPCONTROL_PADDR,
         GIC_VCPUCTRL_PPTR,
+        1,
         false
 #endif /* CONFIG_ARM_HYPERVISOR */
 #ifdef CONFIG_PRINTING
