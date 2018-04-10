@@ -223,7 +223,7 @@ map_kernel_frame(paddr_t paddr, pptr_t vaddr, vm_rights_t vm_rights, vm_attribut
     assert(vaddr >= PPTR_TOP);
 
     if (vm_attributes_get_armPageCacheable(attributes)) {
-        armKSGlobalKernelPT[GET_PD_INDEX(vaddr)][GET_PT_INDEX(vaddr)] = pte_new(
+        armKSGlobalKernelPT[GET_PT_INDEX(vaddr)] = pte_new(
                                                        1,                          /* unprivileged execute never */
                                                        paddr,
                                                        0,                          /* global */
@@ -234,7 +234,7 @@ map_kernel_frame(paddr_t paddr, pptr_t vaddr, vm_rights_t vm_rights, vm_attribut
                                                        0b11                        /* reserved */
                                                    );
     } else {
-        armKSGlobalKernelPT[GET_PD_INDEX(vaddr)][GET_PT_INDEX(vaddr)] = pte_new(
+        armKSGlobalKernelPT[GET_PT_INDEX(vaddr)] = pte_new(
                                                        1,                          /* unprivileged execute never */
                                                        paddr,
                                                        0,                          /* global */
@@ -291,18 +291,14 @@ map_kernel_window(void)
     }
 
     /* put the PD into the PUD for device window */
-    for (idx = GET_PUD_INDEX(PPTR_TOP); idx < BIT(PUD_INDEX_BITS); idx++) {
-      armKSGlobalKernelPUD[idx] = pude_pude_pd_new(
-                                                          pptr_to_paddr(&armKSGlobalKernelPDs[idx][0])
-                                                      );
-    }
+    armKSGlobalKernelPUD[GET_PUD_INDEX(PPTR_TOP)] = pude_pude_pd_new(
+                                                        pptr_to_paddr(&armKSGlobalKernelPDs[BIT(PUD_INDEX_BITS) - 1][0])
+                                                    );
 
     /* put the PT into the PD for device window */
-    for(vaddr = PPTR_TOP; ((GET_PUD_INDEX(vaddr) < (BIT(PUD_INDEX_BITS))) && (vaddr >= PPTR_TOP)); vaddr += BIT(seL4_LargePageBits)) {
-      armKSGlobalKernelPDs[GET_PUD_INDEX(vaddr)][GET_PD_INDEX(vaddr)] = pde_pde_small_new(
-                                                                                  pptr_to_paddr(&armKSGlobalKernelPT[GET_PD_INDEX(vaddr)][0])
-                                                                              );
-    }
+    armKSGlobalKernelPDs[BIT(PUD_INDEX_BITS) - 1][BIT(PD_INDEX_BITS) - 1] = pde_pde_small_new(
+                                                                                pptr_to_paddr(armKSGlobalKernelPT)
+                                                                            );
 
     map_kernel_devices();
 }
