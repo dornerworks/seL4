@@ -103,11 +103,14 @@ struct gich_vcpu_ctrl_map {
     uint32_t lr[64]; /* 0x100 RW 0x00000000 List Registers 0-63, see LRn */
 };
 
-#ifndef GIC_PL400_VCPUCTRL_PPTR
-#error GIC_PL400_VCPUCTRL_PPTR must be defined for virtual memory access to the gic virtual cpu interface control
-#else  /* GIC_PL400_GICVCPUCTRL_PPTR */
+#if defined(GIC_PL400_VCPUCTRL_PPTR)
 static volatile struct gich_vcpu_ctrl_map *gic_vcpu_ctrl =
     (volatile struct gich_vcpu_ctrl_map*)(GIC_PL400_VCPUCTRL_PPTR);
+#elif defined(GIC_500_REDIST_PPTR)
+static volatile struct gich_vcpu_ctrl_map *gic_vcpu_ctrl =
+    (volatile struct gich_vcpu_ctrl_map*)(GIC_500_REDIST_PPTR);
+#else  /* GIC_PL400_GICVCPUCTRL_PPTR */
+#error GIC_PL400_VCPUCTRL_PPTR must be defined for virtual memory access to the gic virtual cpu interface control
 #endif /* GIC_PL400_GICVCPUCTRL_PPTR */
 
 static inline uint32_t
