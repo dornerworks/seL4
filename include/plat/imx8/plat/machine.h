@@ -538,8 +538,15 @@ enum IRQConstants {
 } platform_interrupt_t;
 
 #define N_INTERRUPTS                512
+
+#define INTERRUPT_VGIC_MAINTENANCE  INTERRUPT_PPI_ID25
+
+#ifdef CONFIG_ARM_HYPERVISOR_SUPPORT
+#define KERNEL_TIMER_IRQ            INTERRUPT_PPI_ID26
+#else
 #define KERNEL_TIMER_IRQ            INTERRUPT_PPI_ID27
 #define KERNEL_PMU_IRQ              INTERRUPT_PPI_ID23
+#endif
 
 #include <arch/machine/gic_500.h>
 

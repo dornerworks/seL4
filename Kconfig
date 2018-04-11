@@ -240,6 +240,7 @@ menu "seL4 System"
            select ARM_CORTEX_A53
            select ARCH_ARM_V8A
            select HAVE_FPU if ARCH_AARCH64
+           select START_L1 if ARCH_AARCH64 && ARM_HYPERVISOR_SUPPORT
            help
                 Support for NXP iMX8QM Board
 
