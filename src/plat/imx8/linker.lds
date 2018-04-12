@@ -15,12 +15,12 @@
 ENTRY(_start)
 
 /* WARNING: constants also defined in plat/machine/hardware.h */
-PHYS_BASE   = 0x890000000;
+PHYS_BASE   = 0x880000000;
 #if defined(CONFIG_ARCH_AARCH32)
 KERNEL_BASE = 0xe0000000;
 #elif defined(CONFIG_ARCH_AARCH64)
 #if defined(CONFIG_ARM_HYPERVISOR_SUPPORT)
-KERNEL_BASE = 0xff8000000000;
+KERNEL_BASE = 0xff8000000000 + PHYS_BASE;
 #else
 KERNEL_BASE = 0xffffff8000000000;
 #endif
