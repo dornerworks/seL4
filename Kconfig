@@ -28,6 +28,14 @@ config HAVE_FPU
     bool
     default n
 
+config HAVE_GIC_500
+    bool
+    default n
+
+config HAVE_GIC_390
+    bool
+    default n
+
 config KERNEL_MASTER
     bool
     default y
@@ -167,6 +175,7 @@ menu "seL4 System"
             depends on ARCH_AARCH32
             select ARM_CORTEX_A9
             select ARCH_ARM_V7A
+            select HAVE_GIC_390
             help
                 Support for EXYNOS4 platform (ODROID-X).
 
@@ -177,6 +186,7 @@ menu "seL4 System"
             select PLAT_EXYNOS5
             select ARM_CORTEX_A15
             select ARCH_ARM_V7A
+            select HAVE_GIC_390
             help
                 Support for EXYNOS5410 platform (ODROID-XU).
 
@@ -187,6 +197,7 @@ menu "seL4 System"
             select PLAT_EXYNOS5
             select ARM_CORTEX_A15
             select ARCH_ARM_V7A
+            select HAVE_GIC_390
             help
                 Support for EXYNOS5422 platform (ODROID-XU3).
 
@@ -196,6 +207,7 @@ menu "seL4 System"
             select PLAT_EXYNOS5
             select ARM_CORTEX_A15
             select ARCH_ARM_V7A
+            select HAVE_GIC_390
             help
                 Support for EXYNOS5250 platform (ARNDALE).
 
@@ -204,6 +216,7 @@ menu "seL4 System"
             depends on ARCH_AARCH32
             select ARM_CORTEX_A15
             select ARCH_ARM_V7A
+            select HAVE_GIC_390
             help
                 Support for Qualcomm Snapdragon S4 APQ8064 platforms (Inforce IFC6410).
 
@@ -213,6 +226,7 @@ menu "seL4 System"
             select ARM_CORTEX_A9
             select ARCH_ARM_V7A
             select PLAT_IMX6
+            select HAVE_GIC_390
             help
                 Support for iMX6 platform (Sabre Lite).
 
@@ -222,6 +236,7 @@ menu "seL4 System"
             select ARM_CORTEX_A9
             select ARCH_ARM_V7A
             select PLAT_IMX6
+            select HAVE_GIC_390
             help
                 Support for iMX6 platform (Wandboard Quad).
 
@@ -231,6 +246,7 @@ menu "seL4 System"
             select ARM_CORTEX_A7
             select ARCH_ARM_V7A
             select PLAT_IMX7
+            select HAVE_GIC_390
             help
                 Support for iMX7 Sabre Dual.
 
@@ -239,6 +255,7 @@ menu "seL4 System"
            depends on ARCH_AARCH64
            select ARM_CORTEX_A53
            select ARCH_ARM_V8A
+           select HAVE_GIC_500
            select HAVE_FPU if ARCH_AARCH64
            select START_L1 if ARCH_AARCH64 && ARM_HYPERVISOR_SUPPORT
            help
@@ -249,6 +266,7 @@ menu "seL4 System"
             depends on ARCH_AARCH32
             select ARM_CORTEX_A9
             select ARCH_ARM_V7A
+            select HAVE_GIC_390
             help
                 Support for Xilinx Zynq-7000 platforms.
 
@@ -257,6 +275,7 @@ menu "seL4 System"
             depends on ARCH_ARM
             select ARM_CORTEX_A53
             select ARCH_ARM_V8A
+            select HAVE_GIC_390
             select HAVE_FPU if ARCH_AARCH64
             select START_L1 if ARCH_AARCH64 && ARM_HYPERVISOR_SUPPORT
             help
@@ -273,6 +292,7 @@ menu "seL4 System"
             depends on ARCH_AARCH32
             select ARM_CORTEX_A15
             select ARCH_ARM_V7A
+            select HAVE_GIC_390
             help
                 Support for ALLWINNERA20 platform (CUBIETRUCK).
 
@@ -281,6 +301,7 @@ menu "seL4 System"
             depends on ARCH_AARCH32
             select ARM_CORTEX_A15
             select ARCH_ARM_V7A
+            select HAVE_GIC_390
             help
                 Support for Tegra K1 platform
 
@@ -289,6 +310,7 @@ menu "seL4 System"
             depends on ARCH_ARM
             select ARM_CORTEX_A53
             select ARCH_ARM_V8A
+            select HAVE_GIC_390
             select HAVE_FPU if ARCH_AARCH64
             help
                 Support for HiKey platform.
@@ -307,6 +329,7 @@ menu "seL4 System"
             select ARM_CORTEX_A57
             select ARCH_ARM_V8A
             select HAVE_FPU
+            select HAVE_GIC_390
             help
                 Support for Tegra X1 platform
     endchoice
