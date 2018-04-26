@@ -80,6 +80,8 @@
 #define VGIC_VTR_NPRIOBITS(vtr)         ((((vtr) >> 29) & 0x07) + 1)
 #define VGIC_VTR_NPREBITS(vtr)          ((((vtr) >> 26) & 0x07) + 1)
 
+#if defined(CONFIG_HAVE_GIC_390) && defined(GIC_PL400_VCPUCTRL_PPTR)
+
 struct gich_vcpu_ctrl_map {
     uint32_t hcr;    /* 0x000 RW 0x00000000 Hypervisor Control Register */
     uint32_t vtr;    /* 0x004 RO IMPLEMENTATION DEFINED VGIC Type Register */
@@ -103,12 +105,15 @@ struct gich_vcpu_ctrl_map {
     uint32_t lr[64]; /* 0x100 RW 0x00000000 List Registers 0-63, see LRn */
 };
 
-#if defined(GIC_PL400_VCPUCTRL_PPTR)
 static volatile struct gich_vcpu_ctrl_map *gic_vcpu_ctrl =
     (volatile struct gich_vcpu_ctrl_map*)(GIC_PL400_VCPUCTRL_PPTR);
-#elif defined(GIC_500_REDIST_PPTR)
-static volatile struct gich_vcpu_ctrl_map *gic_vcpu_ctrl =
-    (volatile struct gich_vcpu_ctrl_map*)(GIC_500_REDIST_PPTR);
+
+#elif defined(CONFIG_HAVE_GIC_500)
+
+/* The GICv3 uses System Calls to get the Virtual CPU values instead of
+ * a memory mapped interface.
+ */
+
 #else  /* GIC_PL400_GICVCPUCTRL_PPTR */
 #error GIC_PL400_VCPUCTRL_PPTR must be defined for virtual memory access to the gic virtual cpu interface control
 #endif /* GIC_PL400_GICVCPUCTRL_PPTR */
@@ -116,75 +121,242 @@ static volatile struct gich_vcpu_ctrl_map *gic_vcpu_ctrl =
 static inline uint32_t
 get_gic_vcpu_ctrl_hcr(void)
 {
+#ifndef CONFIG_HAVE_GIC_500
     return gic_vcpu_ctrl->hcr;
+#else
+    uint32_t hcr;
+    MRS("S3_4_C12_C11_0", hcr); /* ICH_HCR_EL2 */
+    return hcr;
+#endif
 }
 
 static inline void
 set_gic_vcpu_ctrl_hcr(uint32_t hcr)
 {
+#ifndef CONFIG_HAVE_GIC_500
     gic_vcpu_ctrl->hcr = hcr;
+#else
+    MSR("S3_4_C12_C11_0", hcr); /* ICH_HCR_EL2 */
+#endif
 }
 
 static inline uint32_t
 get_gic_vcpu_ctrl_vmcr(void)
 {
+#ifndef CONFIG_HAVE_GIC_500
     return gic_vcpu_ctrl->vmcr;
+#else
+    uint32_t vmcr;
+    MRS("S3_4_C12_C11_7", vmcr); /* ICH_VMCR_EL2 */
+    return vmcr;
+#endif
 }
 
 static inline void
 set_gic_vcpu_ctrl_vmcr(uint32_t vmcr)
 {
+#ifndef CONFIG_HAVE_GIC_500
     gic_vcpu_ctrl->vmcr = vmcr;
+#else
+    MSR("S3_4_C12_C11_7", vmcr); /* ICH_VMCR_EL2 */
+#endif
 }
 
 static inline uint32_t
 get_gic_vcpu_ctrl_apr(void)
 {
+#ifndef CONFIG_HAVE_GIC_500
     return gic_vcpu_ctrl->apr;
+#else
+    uint32_t apr;
+    MRS("S3_4_C12_C9_0", apr); /* ICH_APR1_EL2 */
+    return apr;
+#endif
 }
 
 static inline void
 set_gic_vcpu_ctrl_apr(uint32_t apr)
 {
+#ifndef CONFIG_HAVE_GIC_500
     gic_vcpu_ctrl->apr = apr;
+#else
+    MSR("S3_4_C12_C8_0", apr); /* ICH_APR0_EL2 */
+#endif
 }
 
 static inline uint32_t
 get_gic_vcpu_ctrl_vtr(void)
 {
+#ifndef CONFIG_HAVE_GIC_500
     return gic_vcpu_ctrl->vtr;
+#else
+    uint32_t vtr;
+    MRS("S3_4_C12_C11_1", vtr); /* ICH_VTR_EL2 */
+    return vtr;
+#endif
 }
 
 static inline uint32_t
 get_gic_vcpu_ctrl_eisr0(void)
 {
+#ifndef CONFIG_HAVE_GIC_500
     return gic_vcpu_ctrl->eisr0;
+#else
+    uint32_t eisr;
+    MRS("S3_4_C12_C11_3", eisr); /* ICH_EISR_EL2 */
+    return eisr;
+#endif
 }
 
 static inline uint32_t
 get_gic_vcpu_ctrl_eisr1(void)
 {
+#ifndef CONFIG_HAVE_GIC_500
     return gic_vcpu_ctrl->eisr1;
+#else
+    return 0;
+#endif
 }
 
 static inline uint32_t
 get_gic_vcpu_ctrl_misr(void)
 {
+#ifndef CONFIG_HAVE_GIC_500
     return gic_vcpu_ctrl->misr;
+#else
+    uint32_t misr;
+    MRS("S3_4_C12_C11_2", misr); /* ICH_MISR_EL2 */
+    return misr;
+#endif
 }
 
 static inline virq_t
 get_gic_vcpu_ctrl_lr(int num)
 {
     virq_t virq;
+#ifndef CONFIG_HAVE_GIC_500
     virq.words[0] = gic_vcpu_ctrl->lr[num];
+#else
+    num &= 0xF;
+    switch ( num )
+    {
+    case 0:
+        MRS("S3_4_C12_C12_0", virq.words[0]);
+        break;
+    case 1:
+        MRS("S3_4_C12_C12_1", virq.words[0]);
+        break;
+    case 2:
+        MRS("S3_4_C12_C12_2", virq.words[0]);
+        break;
+    case 3:
+        MRS("S3_4_C12_C12_3", virq.words[0]);
+        break;
+    case 4:
+        MRS("S3_4_C12_C12_4", virq.words[0]);
+        break;
+    case 5:
+        MRS("S3_4_C12_C12_5", virq.words[0]);
+        break;
+    case 6:
+        MRS("S3_4_C12_C12_6", virq.words[0]);
+        break;
+    case 7:
+        MRS("S3_4_C12_C12_7", virq.words[0]);
+        break;
+    case 8:
+        MRS("S3_4_C12_C13_0", virq.words[0]);
+        break;
+    case 9:
+        MRS("S3_4_C12_C13_1", virq.words[0]);
+        break;
+    case 10:
+        MRS("S3_4_C12_C13_2", virq.words[0]);
+        break;
+    case 11:
+        MRS("S3_4_C12_C13_3", virq.words[0]);
+        break;
+    case 12:
+        MRS("S3_4_C12_C13_4", virq.words[0]);
+        break;
+    case 13:
+        MRS("S3_4_C12_C13_5", virq.words[0]);
+        break;
+    case 14:
+        MRS("S3_4_C12_C13_6", virq.words[0]);
+        break;
+    case 15:
+        MRS("S3_4_C12_C13_7", virq.words[0]);
+        break;
+    default:
+        assert(!"Cannot read provided List Register");
+    }
+#endif
     return virq;
 }
 
 static inline void
 set_gic_vcpu_ctrl_lr(int num, virq_t lr)
 {
+#ifndef CONFIG_HAVE_GIC_500
     gic_vcpu_ctrl->lr[num] = lr.words[0];
+#else
+    num &= 0xF;
+    switch ( num )
+    {
+    case 0:
+        MSR("S3_4_C12_C12_0", lr.words[0]);
+        break;
+    case 1:
+        MSR("S3_4_C12_C12_1", lr.words[0]);
+        break;
+    case 2:
+        MSR("S3_4_C12_C12_2", lr.words[0]);
+        break;
+    case 3:
+        MSR("S3_4_C12_C12_3", lr.words[0]);
+        break;
+    case 4:
+        MSR("S3_4_C12_C12_4", lr.words[0]);
+        break;
+    case 5:
+        MSR("S3_4_C12_C12_5", lr.words[0]);
+        break;
+    case 6:
+        MSR("S3_4_C12_C12_6", lr.words[0]);
+        break;
+    case 7:
+        MSR("S3_4_C12_C12_7", lr.words[0]);
+        break;
+    case 8:
+        MSR("S3_4_C12_C13_0", lr.words[0]);
+        break;
+    case 9:
+        MSR("S3_4_C12_C13_1", lr.words[0]);
+        break;
+    case 10:
+        MSR("S3_4_C12_C13_2", lr.words[0]);
+        break;
+    case 11:
+        MSR("S3_4_C12_C13_3", lr.words[0]);
+        break;
+    case 12:
+        MSR("S3_4_C12_C13_4", lr.words[0]);
+        break;
+    case 13:
+        MSR("S3_4_C12_C13_5", lr.words[0]);
+        break;
+    case 14:
+        MSR("S3_4_C12_C13_6", lr.words[0]);
+        break;
+    case 15:
+        MSR("S3_4_C12_C13_7", lr.words[0]);
+        break;
+    default:
+        assert(!"Cannot set provided List Register");
+    }
+    isb();
+#endif
 }
 
 static unsigned int gic_vcpu_num_list_regs;
