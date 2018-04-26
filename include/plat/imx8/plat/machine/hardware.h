@@ -81,6 +81,10 @@ const p_region_t BOOT_RODATA dev_p_regs[] = {
 static inline void
 handleReservedIRQ(irq_t irq)
 {
+    if ((config_set(CONFIG_ARM_HYPERVISOR_SUPPORT)) && (irq == INTERRUPT_VGIC_MAINTENANCE)) {
+        VGICMaintenance();
+        return;
+    }
 }
 
 #endif /* __PLAT_MACHINE_HARDWARE_H */
