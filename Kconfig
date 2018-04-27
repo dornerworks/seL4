@@ -347,7 +347,7 @@ menu "seL4 System"
 
     config ARM_SMMU_V2
         bool "Enable SystemMMUv2 Support"
-        depends on PLAT_ZYNQMP
+        depends on PLAT_ZYNQMP || PLAT_IMX8
         default n
         help
             Support for MMU-500 SystemMMUs
