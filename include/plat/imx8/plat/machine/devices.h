@@ -16,6 +16,8 @@
 
 #include <plat_mode/machine/devices.h>
 
+#define ARM_PLAT_NUM_CB            32
+
 // Virtual Addresses _________________________________________________
 #define GIC_500_DISTRIBUTOR_PPTR   GIC_DISTRIBUTOR_PPTR
 #define GIC_500_REDIST_PPTR        GIC_REDIST_PPTR
@@ -48,6 +50,8 @@
 #define GPU1_PADDR          0x54000000
 #define GPU0_PADDR          0x53000000
 #define CCI_PADDR           0x52000000
+#define SMMU_PADDR          0x51400000
+#define SMMU_SIZE           0x00040000
 #define DBLOG_PADDR         0x51000000
 // #define RESERVED_PADDR       0x42000000
 // #define RESERVED_PADDR       0x40000000

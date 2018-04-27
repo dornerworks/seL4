@@ -13,6 +13,7 @@ DIRECTORIES += src/arch/arm/machine
 ARCH_C_SOURCES += machine/cache.c \
                   machine/errata.c \
                   machine/io.c \
+                  machine/smmu.c \
                   machine/debug.c
 
 ifeq ($(CPU), cortex-a9)
@@ -30,10 +31,6 @@ endif
 # platforms that use the generic timer
 ifeq ($(PLAT), $(filter $(PLAT), exynos5 bcm2837 hikey tk1 tx1 zynqmp imx7 imx8))
 	ARCH_C_SOURCES += machine/generic_timer.c
-endif
-
-ifeq ($(PLAT), zynqmp)
-    ARCH_C_SOURCES += machine/smmu.c
 endif
 
 ifeq ($(GIC), 390)

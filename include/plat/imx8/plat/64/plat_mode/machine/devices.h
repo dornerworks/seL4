@@ -18,10 +18,12 @@
 #define UART_PPTR                     0xffffffffffff0000
 #define GIC_DISTRIBUTOR_PPTR          0xfffffffffff00000
 #define GIC_REDIST_PPTR               0xfffffffffff10000
+#define SMMU_PPTR                     0xfffffffffff40000
 #else
 #define UART_PPTR                     0xffffffff0000
 #define GIC_DISTRIBUTOR_PPTR          0xfffffff00000
 #define GIC_REDIST_PPTR               0xfffffff10000
+#define SMMU_PPTR                     0xfffffff40000
 #endif
 
 #endif /* __PLAT_MODE_MACHINE_DEVICES_H */

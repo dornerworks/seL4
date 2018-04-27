@@ -22,6 +22,7 @@
 #include <plat/machine.h>
 #include <plat/machine/devices.h>
 #include <plat_mode/machine/hardware.h>
+#include <arch/machine/smmu.h>
 #include <machine/io.h>
 
 #define physBase        0x880000000
@@ -41,8 +42,16 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
         GIC_500_REDIST_PPTR,
         32,
         true /* armExecuteNever */
+#ifdef CONFIG_ARM_SMMU
     },
+    {
+        SMMU_PADDR,
+        SMMU_PPTR,
+        (SMMU_SIZE >> PAGE_BITS),
+        false
+#endif /* CONFIG_ARM_SMMU */
 #ifdef CONFIG_PRINTING
+    },
     {
         /*  UART */
         UART_PADDR,
@@ -67,7 +76,7 @@ const p_region_t BOOT_RODATA dev_p_regs[] = {
 { /* .start = */ DMA_LPUART1_PADDR           , /* .end = */ DMA_LPUART1_PADDR + ( 16 << PAGE_BITS)}, /* 64KB */
 { /* .start = */ DMA_LPUART0_PADDR           , /* .end = */ DMA_LPUART0_PADDR + ( 16 << PAGE_BITS)}, /* 64KB */
 { /* .start = */ Dblog_GIC_PADDR             , /* .end = */ Dblog_GIC_PADDR   + ( 2 << 20)},  /* 2MB */
-{ /* .start = */ Dblog_SMMU_PADDR            , /* .end = */ Dblog_SMMU_PADDR  + ( 4 << 20)},  /* 4MB */
+{ /* .start = */ SMMU_PADDR                  , /* .end = */ SMMU_PADDR  + SMMU_SIZE},
 { /* .start = */ Dblog_STM_PADDR             , /* .end = */ Dblog_STM_PADDR   + ( 2 << 20)},  /* 2MB */
 { /* .start = */ Dblog_LPCG_PADDR            , /* .end = */ Dblog_LPCG_PADDR  + ( 16 << PAGE_BITS)}, /* 64KB */
 { /* .start = */ GPT0_PADDR                  , /* .end = */ GPT0_PADDR   + ( 1 << PAGE_BITS)},
@@ -89,6 +98,11 @@ handleReservedIRQ(irq_t irq)
         VGICMaintenance();
         return;
     }
+
+   if (config_set(CONFIG_ARM_SMMU) && (irq == INTERRUPT_SMMU)) {
+      plat_smmu_handle_interrupt();
+      return;
+   }
 }
 
 #endif /* __PLAT_MACHINE_HARDWARE_H */

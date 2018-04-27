@@ -86,7 +86,7 @@ enum IRQConstants {
     INTERRUPT_M41_INT_OUT_5                = 61,
     INTERRUPT_M41_INT_OUT_6                = 62,
     INTERRUPT_M41_INT_OUT_7                = 63,
-    INTERRUPT_DBLog_comb_irpt_ns           = 64,
+    INTERRUPT_SMMU                         = 64,
     INTERRUPT_DBLog_comb_irpt_s            = 65,
     INTERRUPT_DBLog_gbl_flt_irpt_ns        = 66,
     INTERRUPT_DBLog_gbl_flt_irpt_s         = 67,
