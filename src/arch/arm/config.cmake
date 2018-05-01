@@ -217,13 +217,19 @@ config_option(KernelArmErrata773022 ARM_ERRATA_773022
 config_option(KernelArmSMMU ARM_SMMU
     "Enable SystemMMU support"
     DEFAULT OFF
-    DEPENDS "KernelArmSMMUTK1" DEFAULT_DISABLED OFF
+    DEPENDS "KernelArmSMMUTK1 OR KernelArmSMMUv2" DEFAULT_DISABLED OFF
 )
 
 config_option(KernelArmSMMUTK1 TK1_SMMU
     "Enable SystemMMU for the Tegra TK1 SoC"
     DEFAULT OFF
     DEPENDS "KernelPlatformTK1"
+)
+
+config_option(KernelArmSMMUv2 ARM_SMMU_V2
+    "Enable SystemMMUv2 Support"
+    DEFAULT OFF
+    DEPENDS "KernelPlatformZynqMP"
 )
 
 config_option(KernelArmEnableA9Prefetcher ENABLE_A9_PREFETCHER

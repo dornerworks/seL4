@@ -343,7 +343,14 @@ menu "seL4 System"
 
     config ARM_SMMU
         bool
-        default y if TK1_SMMU
+        default y if ARM_SMMU_V2 || TK1_SMMU
+
+    config ARM_SMMU_V2
+        bool "Enable SystemMMUv2 Support"
+        depends on PLAT_ZYNQMP
+        default n
+        help
+            Support for MMU-500 SystemMMUs
 
     config TK1_SMMU
         bool "Enable TK1 SystemMMU Support"
