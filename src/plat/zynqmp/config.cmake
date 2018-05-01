@@ -58,10 +58,11 @@ if(KernelPlatformZynqmp)
         NUM_PPI 32
         TIMER drivers/timer/arm_generic.h
         INTERRUPT_CONTROLLER arch/machine/gic_v2.h
+        SMMU arch/machine/smmu.h
     )
 endif()
 
 add_sources(
     DEP "KernelPlatformZynqmp"
-    CFILES src/arch/arm/machine/gic_v2.c src/arch/arm/machine/l2c_nop.c
+    CFILES src/arch/arm/machine/smmu.c src/arch/arm/machine/gic_v2.c src/arch/arm/machine/l2c_nop.c
 )
