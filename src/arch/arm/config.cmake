@@ -213,7 +213,14 @@ config_option(KernelArmErrata773022 ARM_ERRATA_773022
     DEPENDS "KernelArchARM;KernelArmCortexA15" DEFAULT_DISABLED OFF
 )
 
+
 config_option(KernelArmSMMU ARM_SMMU
+    "Enable SystemMMU support"
+    DEFAULT OFF
+    DEPENDS "KernelArmSMMUTK1" DEFAULT_DISABLED OFF
+)
+
+config_option(KernelArmSMMUTK1 TK1_SMMU
     "Enable SystemMMU for the Tegra TK1 SoC"
     DEFAULT OFF
     DEPENDS "KernelPlatformTK1"

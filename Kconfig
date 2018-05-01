@@ -342,11 +342,15 @@ menu "seL4 System"
             Utilise ARM virtualisation extensions to build the kernel as a hypervisor
 
     config ARM_SMMU
-        bool "Enable SystemMMU for Tegra K1 SoC"
+        bool
+        default y if TK1_SMMU
+
+    config TK1_SMMU
+        bool "Enable TK1 SystemMMU Support"
         depends on PLAT_TK1
         default n
         help
-            Support for TK1 SoC-specific SystemMMU
+            Support for SystemMMU on TK1
 
 source "$KERNEL_PATH/src/arch/arm/Kconfig"
 source "$KERNEL_PATH/src/plat/pc99/Kconfig"
