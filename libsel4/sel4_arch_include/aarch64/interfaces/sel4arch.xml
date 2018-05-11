@@ -186,7 +186,7 @@
                 </brief>
             <param dir="in" name="field" type="seL4_Uint32"
             description="Register ID to write to a VCPU"/>
-            <param dir="in" name="value" type="seL4_Uint32"
+            <param dir="in" name="value" type="seL4_Uint64"
             description="Value to be written to the VCPU register"/>
         </method>
     </interface>
