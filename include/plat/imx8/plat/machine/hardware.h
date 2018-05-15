@@ -88,6 +88,8 @@ const p_region_t BOOT_RODATA dev_p_regs[] = {
 { /* .start = */ MU2_BASE_PADDR              , /* .end = */ MU2_BASE_PADDR + ( 16 << PAGE_BITS)},
 { /* .start = */ MU3_BASE_PADDR              , /* .end = */ MU3_BASE_PADDR + ( 16 << PAGE_BITS)},
 { /* .start = */ DMA_LPCG0_LPUART0_PADDR     , /* .end = */ DMA_LPCG0_LPUART0_PADDR + ( 16 << PAGE_BITS)},
+{ /* .start = */ Connectivity_LPCGENET1_PADDR, /* .end = */ Connectivity_LPCGENET1_PADDR + ( 16 << PAGE_BITS)},
+{ /* .start = */ Connectivity_ENET_AVB1_PADDR, /* .end = */ Connectivity_ENET_AVB1_PADDR + ( 16 << PAGE_BITS)},
 };
 
 /* Handle a platform-reserved IRQ. */
