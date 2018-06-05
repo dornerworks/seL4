@@ -27,5 +27,6 @@ tagged_union seL4_Fault seL4_FaultType {
 #ifdef CONFIG_ARM_HYPERVISOR_SUPPORT
     tag VGICMaintenance 6
     tag VCPUFault 7
+    tag PSCIFault 8
 #endif
 }

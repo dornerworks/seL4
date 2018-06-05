@@ -80,6 +80,12 @@ enum {
 } seL4_VCPUFault_Msg;
 
 enum {
+    seL4_PSCIFault_Function,
+    seL4_PSCIFault_Length,
+    SEL4_FORCE_LONG_ENUM(seL4_PSCIFault_Msg),
+} seL4_PSCIFault_Msg;
+
+enum {
     seL4_VCPUReg_SCTLR = 0,
     seL4_VCPUReg_LRsvc,
     seL4_VCPUReg_SPsvc,

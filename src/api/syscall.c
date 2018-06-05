@@ -32,6 +32,15 @@
 #include <arch/machine/capdl.h>
 #endif
 
+#ifdef CONFIG_ARM_HYPERVISOR_SUPPORT
+#define SYS_PSCI 0
+#define ESR_EC_HVC      0b010110
+#define HSR_EC_HVC      0b010010
+#define SYND_REG_EC(x)       (x >> 26)
+#define SYND_REG_ISS(x)      (x & 0x1ffffff)
+#define PSCI_SYND_REG_ISS    0
+#endif
+
 /* The haskell function 'handleEvent' is split into 'handleXXX' variants
  * for each event causing a kernel entry */
 
@@ -61,6 +70,32 @@ handleInterruptEntry(void)
 exception_t
 handleUnknownSyscall(word_t w)
 {
+#ifdef CONFIG_ARM_HYPERVISOR_SUPPORT
+    if (w == SYS_PSCI) {
+        uint32_t function;
+        uint32_t syndReg;
+
+#ifdef CONFIG_ARCH_AARCH64
+        syndReg = getESR();
+
+        if (SYND_REG_EC(syndReg) == ESR_EC_HVC && SYND_REG_ISS(syndReg) == PSCI_SYND_REG_ISS) {
+            function = getRegister(NODE_STATE(ksCurThread), X0);
+#else
+        syndReg = getHSR();
+
+        if (SYND_REG_EC(syndReg) == HVC_EC_HVC && SYND_REG_ISS(syndReg) == PSCI_SYND_REG_ISS) {
+            function = getRegister(NODE_STATE(ksCurThread), R0);
+#endif
+
+            current_fault = seL4_Fault_PSCIFault_new(function);
+            handleFault(NODE_STATE(ksCurThread));
+            schedule();
+            activateThread();
+
+            return EXCEPTION_NONE;
+        }
+    }
+#endif
 #ifdef CONFIG_PRINTING
     if (w == SysDebugPutChar) {
         kernel_putchar(getRegister(NODE_STATE(ksCurThread), capRegister));

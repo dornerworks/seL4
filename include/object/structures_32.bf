@@ -231,27 +231,27 @@ tagged_union lookup_fault lufType {
 
 -- Fault: size = 8 bytes
 block NullFault {
-    padding 61
-    field seL4_FaultType 3
+    padding 60
+    field seL4_FaultType 4
 }
 
 block CapFault {
     field address 32
     field inReceivePhase 1
-    padding 28
-    field seL4_FaultType 3
+    padding 27
+    field seL4_FaultType 4
 }
 
 block UnknownSyscall {
     field syscallNumber 32
-    padding 29
-    field seL4_FaultType 3
+    padding 28
+    field seL4_FaultType 4
 }
 
 block UserException {
     field number 32
-    field code 29
-    field seL4_FaultType 3
+    field code 28
+    field seL4_FaultType 4
 }
 
 #ifdef CONFIG_HARDWARE_DEBUG_API

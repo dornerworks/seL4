@@ -50,6 +50,8 @@ seL4_getArchFault(seL4_MessageInfo_t tag)
         return seL4_Fault_VGICMaintenance_new(seL4_GetMR(seL4_VGICMaintenance_IDX));
     case seL4_Fault_VCPUFault:
         return seL4_Fault_VCPUFault_new(seL4_GetMR(seL4_VCPUFault_HSR));
+    case seL4_Fault_PSCIFault:
+        return seL4_Fault_PSCIFault_new(seL4_GetMR(seL4_PSCIFault_Function));
 #endif /* CONFIG_ARM_HYPERVISOR_SUPPORT */
     default:
         return seL4_Fault_NullFault_new();

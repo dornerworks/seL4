@@ -29,6 +29,8 @@ Arch_handleFaultReply(tcb_t *receiver, tcb_t *sender, word_t faultType)
         return true;
     case seL4_Fault_VCPUFault:
         return true;
+    case seL4_Fault_PSCIFault:
+        return true;
 #endif
     default:
         fail("Invalid fault");
@@ -66,6 +68,9 @@ Arch_setMRs_fault(tcb_t *sender, tcb_t* receiver, word_t *receiveIPCBuffer, word
         }
     case seL4_Fault_VCPUFault:
         return setMR(receiver, receiveIPCBuffer, seL4_VCPUFault_HSR, seL4_Fault_VCPUFault_get_hsr(sender->tcbFault));
+
+    case seL4_Fault_PSCIFault:
+        return setMR(receiver, receiveIPCBuffer, seL4_PSCIFault_Function, seL4_Fault_PSCIFault_get_function(sender->tcbFault));
 #endif
 
     default:
