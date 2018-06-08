@@ -79,7 +79,9 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
 const p_region_t BOOT_RODATA avail_p_regs[] = {
     /* 2 GiB */
     { /* .start = */ 0x00000000, /* .end = */ 0x80000000 },
+#ifdef CONFIG_ARCH_AARCH64
     { /* .start = */ 0x800000000, /* .end = */ 0x880000000 }
+#endif
 };
 
 const p_region_t BOOT_RODATA dev_p_regs[] = {
