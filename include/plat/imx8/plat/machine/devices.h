@@ -206,6 +206,9 @@
 #define LSIO_PWM2_PADDR                                         0x5E020000      /* 64KB */
 #define LSIO_PWM1_PADDR                                         0x5E010000      /* 64KB */
 #define LSIO_PWM0_PADDR                                         0x5E000000      /* 64KB */
+#define MU3_BASE_PADDR                                          0x5D1E0000
+#define MU2_BASE_PADDR                                          0x5D1D0000
+#define MU1_BASE_PADDR                                          0x5D1C0000
 #define MU_BASE_PADDR                                           0x5D1B0000
 // GPT0 is the only one really listed in the Linux device tree
 #define GPT4_PADDR                                              0x5D180000      /* 64KB */

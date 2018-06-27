@@ -75,7 +75,9 @@ const p_region_t BOOT_RODATA dev_p_regs[] = {
 { /* .start = */ GPT2_PADDR                  , /* .end = */ GPT2_PADDR   + ( 1 << PAGE_BITS)},
 { /* .start = */ GPT3_PADDR                  , /* .end = */ GPT3_PADDR   + ( 1 << PAGE_BITS)},
 { /* .start = */ GPT4_PADDR                  , /* .end = */ GPT4_PADDR   + ( 1 << PAGE_BITS)},
-{ /* .start = */ MU_BASE_PADDR               , /* .end = */ MU_BASE_PADDR + ( 1 << PAGE_BITS)},
+{ /* .start = */ MU_BASE_PADDR               , /* .end = */ MU_BASE_PADDR + ( 16 << PAGE_BITS)},
+{ /* .start = */ MU2_BASE_PADDR              , /* .end = */ MU2_BASE_PADDR + ( 16 << PAGE_BITS)},
+{ /* .start = */ MU3_BASE_PADDR              , /* .end = */ MU3_BASE_PADDR + ( 16 << PAGE_BITS)},
 { /* .start = */ DMA_LPCG0_LPUART0_PADDR     , /* .end = */ DMA_LPCG0_LPUART0_PADDR + ( 16 << PAGE_BITS)},
 };
 
