@@ -16,7 +16,7 @@
 #define __PLAT_MODE_MACHINE_HARDWARE_H
 
 #ifdef CONFIG_ARM_HYPERVISOR_SUPPORT
-#define kernelBase          0xff8880000000
+#define kernelBase          0xff8080400000
 #else
 #define kernelBase          0xffffff8000000000
 #endif

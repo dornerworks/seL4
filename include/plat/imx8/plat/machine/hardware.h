@@ -25,7 +25,7 @@
 #include <arch/machine/smmu.h>
 #include <machine/io.h>
 
-#define physBase        0x880000000
+#define physBase        0x80400000
 
 
 static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
@@ -66,6 +66,7 @@ static const kernel_frame_t BOOT_RODATA kernel_devices[] = {
 /* Available physical memory regions on platform (RAM) */
 /* NOTE: Regions are not allowed to be adjacent! */
 const p_region_t BOOT_RODATA avail_p_regs[] = {
+    { /* .start = */ 0x80400000 , /* .end = */ 0x100000000},
     { /* .start = */ 0x880000000, /* .end = */ 0x980000000},
 };
 
