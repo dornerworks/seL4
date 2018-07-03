@@ -113,7 +113,7 @@
 #define TTBCR_T0SZ_SHIFT 0
 #define TTBCR_PA_SHIFT   16
 #define TTBCR_ADDR_32    (0 << TTBCR_PA_SHIFT)
-#define TTBCR_ADDR_48    (2 << TTBCR_PA_SHIFT)
+#define TTBCR_ADDR_48    (5 << TTBCR_PA_SHIFT)
 
 #define TTBCR2_SEP_SHIFT 15
 #define TTBCR2_ADDR_32   0
