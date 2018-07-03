@@ -258,7 +258,7 @@ static void smmu_clear_cb(uint8_t cbidx)
    ARM_SMMU_WR(0, gr0, ARM_SMMU_GR0_SMR(cbidx));
 
    /* Set default match behavior */
-#ifdef ARM_SMMU_UNKNOWN_STREAM_FAULT
+#ifdef CONFIG_ARM_SMMU_UNKNOWN_STREAM_FAULT
    reg = S2CR_TYPE_FAULT;
 #else
    reg = S2CR_TYPE_BYPASS;
@@ -356,7 +356,7 @@ BOOT_CODE int plat_smmu_init(void)
    reg &= ~sCR0_FB;
 
    /* Default to either fault or bypass for unknown stream IDs depending on configuration */
-#ifdef ARM_SMMU_UNKNOWN_STREAM_FAULT
+#ifdef CONFIG_ARM_SMMU_UNKNOWN_STREAM_FAULT
    reg |= sCR0_USFCFG;
 #else
    reg &= ~sCR0_USFCFG;
