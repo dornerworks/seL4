@@ -86,7 +86,7 @@
 
 #define TTBCR_TG0_SHIFT 14
 #define TTBCR_TG0_MASK  0x3
-#define TTBCR_TG0_4K    (0x2 << TTBCR_TG0_SHIFT)
+#define TTBCR_TG0_4K    (0x0 << TTBCR_TG0_SHIFT)
 
 #define TTBCR_SH0_SHIFT 12
 #define TTBCR_SH0_MASK  0x3
