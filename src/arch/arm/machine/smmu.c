@@ -49,6 +49,12 @@
 #define SMR_VALID           (1 << 31)
 #define SMR_ID_SHIFT        0
 #define SMR_ID_MASK         0x7fff
+#define SMR_MASK_SHIFT      16
+#define SMR_MASK_MASK       0x7fff
+
+#ifdef CONFIG_PLAT_IMX8
+#define SMR_HIGH_MASK       0x7f80
+#endif
 
 #define ARM_SMMU_GR0_S2CR(n) (0xc00 + ((n) << 2))
 #define S2CR_TYPE_SHIFT 16
@@ -511,7 +517,11 @@ static void smmu_alloc_cb(uint8_t cbidx, uint16_t sid, iopde_t* iopd)
 
 
    /* Match on Stream ID */
+#ifdef CONFIG_PLAT_IMX8
+   reg = SMR_VALID | (sid << SMR_ID_SHIFT) | (SMR_HIGH_MASK << SMR_MASK_SHIFT);
+#else
    reg = SMR_VALID | (sid << SMR_ID_SHIFT);
+#endif
    ARM_SMMU_WR(reg, gr0, ARM_SMMU_GR0_SMR(cbidx));
 
    /* Stream ID to CB ID */
