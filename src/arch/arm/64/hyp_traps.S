@@ -141,6 +141,8 @@ BEGIN_FUNC(guest_sync)
     b.eq    guest_ia
     cmp     x24, #ESR_EC_HVC64
     b.eq    guest_svc
+    cmp     x24, #ESR_EC_SYSREG
+    b.eq    guest_vcpu
     cmp     x24, #ESR_EC_ENFP
     b.eq    guest_enfp
     b       guest_user
@@ -167,6 +169,14 @@ guest_svc:
     lsp_i   x19
     mov     x2, x7
     b       c_handle_syscall
+
+guest_vcpu:
+    mrs     x20, ELR_EL2
+    add     x20, x20, #4
+    str     x20, [sp, #PT_FaultInstruction]
+
+    lsp_i   x19
+    b       c_handle_vcpu_fault
 
 guest_enfp:
 #ifdef CONFIG_HAVE_FPU

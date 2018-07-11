@@ -80,6 +80,16 @@
 #define VGIC_VTR_NPRIOBITS(vtr)         ((((vtr) >> 29) & 0x07) + 1)
 #define VGIC_VTR_NPREBITS(vtr)          ((((vtr) >> 26) & 0x07) + 1)
 
+#define SGI1R_Rt_BITS   5
+#define SGI1R_Rt_MASK   0x3E0
+#define SGI1R_GET_Rt(x) ((x & SGI1R_Rt_MASK) >> SGI1R_Rt_BITS)
+
+#define SGI1R_IS_WRITE(x) !(x & 1)
+
+#define ICC_SGI1R_EL1 0x3A3016
+
+#define ESR_IS_SGI1R(x)   ((x & ICC_SGI1R_EL1) == ICC_SGI1R_EL1)
+
 #if defined(CONFIG_HAVE_GIC_390) && defined(GIC_PL400_VCPUCTRL_PPTR)
 
 struct gich_vcpu_ctrl_map {
@@ -819,6 +829,20 @@ vcpu_boot_init(void)
 void
 handleVCPUFault(word_t hsr)
 {
+    uint32_t esr = getESR();
+
+    /* ICC_SGI1R_EL1 is a WO register */
+    if (ESR_IS_SGI1R(esr) && SGI1R_IS_WRITE(esr)) {
+        uint16_t rt = SGI1R_GET_Rt(esr);
+
+        /* Actually inject the IRQ */
+        MSR("S3_0_C12_C11_5", getRegister(NODE_STATE(ksCurThread), rt));
+
+        /* Set the PC to the next instruction */
+        setNextPC(NODE_STATE(ksCurThread), getRestartPC(NODE_STATE(ksCurThread)));
+        return;
+    }
+
     current_fault = seL4_Fault_VCPUFault_new(hsr);
     handleFault(ksCurThread);
     schedule();

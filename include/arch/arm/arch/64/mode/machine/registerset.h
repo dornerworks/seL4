@@ -46,6 +46,7 @@
 #define ESR_EC_SVC64            0x15   // SVC instruction execution in AArch64 state
 #define ESR_EC_HVC64            0x16   // HVC instruction execution in AArch64 state
 #define ESR_EC_ENFP             0x7    // Access to Advanced SIMD or floating-point registers
+#define ESR_EC_SYSREG           0x18   // MSR, MRS, or System instruction execution in AArch64 state
 
 /* ID_AA64PFR0_EL1 register */
 #define ID_AA64PFR0_EL1_FP      16     // HWCap for Floating Point
