@@ -361,8 +361,13 @@ BOOT_CODE int plat_smmu_init(void)
    reg |= sCR0_PTM;
    reg &= ~sCR0_FB;
 
-   /* Default to either fault or bypass for unknown stream IDs depending on configuration */
-#ifdef CONFIG_ARM_SMMU_UNKNOWN_STREAM_FAULT
+   /*
+      Default to either fault or bypass for unknown stream IDs depending on configuration
+
+      Setting this bit on the iMX8QM causes the device to halt, so make sure
+      we do not set it.
+    */
+#if CONFIG_ARM_SMMU_UNKNOWN_STREAM_FAULT && !PLAT_IMX8
    reg |= sCR0_USFCFG;
 #else
    reg &= ~sCR0_USFCFG;

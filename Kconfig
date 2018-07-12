@@ -361,7 +361,7 @@ menu "seL4 System"
 
     config ARM_SMMU_UNKNOWN_STREAM_FAULT
         bool "Enable faults for unknown Stream IDs"
-        depends on ARM_SMMU_V2
+        depends on ARM_SMMU_V2 && !PLAT_IMX8
         default y
         help
             Fault when a master with a stream ID that does not match any
