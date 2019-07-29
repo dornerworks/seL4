@@ -42,6 +42,14 @@ if(KernelPlatformZynqmp)
         list(APPEND KernelDTSList "tools/dts/zynqmp.dts")
     endif()
 
+    if(KernelArmHypervisorSupport)
+        set(KernelAllowSMCCalls ON)
+    endif()
+
+    if(KernelArmHypervisorSupport)
+        set(KernelAllowSMCCalls ON)
+    endif()
+
     declare_default_headers(
         TIMER_FREQUENCY 100000000llu
         MAX_IRQ 187
