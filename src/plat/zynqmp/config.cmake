@@ -59,6 +59,8 @@ if(KernelPlatformZynqmp)
         TIMER drivers/timer/arm_generic.h
         INTERRUPT_CONTROLLER arch/machine/gic_v2.h
         SMMU arch/machine/smmu.h
+        SMMU_SIZE 0x20000
+        SMMU_CB 16
     )
 endif()
 
