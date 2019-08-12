@@ -18,7 +18,7 @@ endif()
 
 set(KernelArmPASizeBits40 OFF)
 set(KernelArmPASizeBits44 OFF)
-if(KernelArmCortexA53)
+if(KernelArmCortexA53 OR KernelArmCortexA55)
     set(KernelArmPASizeBits40 ON)
 elseif(KernelArmCortexA57)
     set(KernelArmPASizeBits44 ON)
@@ -75,7 +75,7 @@ config_option(
     KernelArmHypervisorSupport ARM_HYPERVISOR_SUPPORT
     "Build as Hypervisor. Utilise ARM virtualisation extensions to build the kernel as a hypervisor"
     DEFAULT ${default_hyp_support}
-    DEPENDS "KernelArmCortexA15 OR KernelArmCortexA57 OR KernelArmCortexA53"
+    DEPENDS "KernelArmCortexA15 OR KernelArmCortexA57 OR KernelArmCortexA53 OR KernelArmCortexA55"
 )
 
 config_option(
@@ -217,6 +217,7 @@ if(
     OR KernelArmCortexA8
     OR KernelArmCortexA15
     OR KernelArmCortexA53
+    OR KernelArmCortexA55
     OR KernelArmCortexA57
 )
     config_set(KernelArmCacheLineSizeBits L1_CACHE_LINE_SIZE_BITS "6")
