@@ -9,8 +9,8 @@
  */
 
 / {
-	/* BeagleBone Black has 512MiB memory */
-	memory@80000000 {
-		reg = < 0x80000000 0x20000000 >;
-	};
+    amba {
+    	/* bug: pcie node generates untyped objects too large for hypervisor mode */
+    	/delete-node/ pcie@fd0e0000;
+    };
 };
