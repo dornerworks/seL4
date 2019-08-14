@@ -24,14 +24,17 @@ devices:
       - executeNever: true
         index: 0
         kernel: GIC_V2_DISTRIBUTOR_PPTR
+        kernel_size: 0x10000
         # controller
       - executeNever: true
         index: 1
         kernel: GIC_V2_CONTROLLER_PPTR
+        kernel_size: 0x20000
         # GICV
       - executeNever: true
         index: 2
         kernel: GIC_V2_VCPUCTRL_PPTR
+        kernel_size: 0x20000
         macro: CONFIG_ARM_HYPERVISOR_SUPPORT
         user: false # never expose to userspace, even if macro is false.
         # other regions (i.e. GICH)
@@ -253,4 +256,3 @@ devices:
       - executeNever: true
         index: 0
         kernel: PLIC_PPTR
-
