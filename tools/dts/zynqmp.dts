@@ -1038,6 +1038,29 @@
 		};
 	};
 
+	amba_pl@0 {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		compatible = "simple-bus";
+		ranges;
+
+		gpio@a0000000 {
+			compatible = "xlnx,axi-gpio-2.0", "xlnx,xps-gpio-1.00.a";
+			status = "okay";
+			interrupt-parent = < 0x03 >;
+			interrupts = < 0 89 4 >;
+			reg = < 0x0 0xa0000000 0x0 0x1000 >;
+		};
+
+		gpio@b0000000 {
+			compatible = "xlnx,axi-gpio-2.0", "xlnx,xps-gpio-1.00.a";
+			status = "okay";
+			interrupt-parent = < 0x03 >;
+			interrupts = < 0 90 4 >;
+			reg = < 0x0 0xb0000000 0x0 0x1000 >;
+		};
+	};
+
 	clk100 {
 		compatible = "fixed-clock";
 		#clock-cells = < 0x00 >;
