@@ -113,7 +113,7 @@ static inline void sfence(void)
 
 static inline void hwASIDFlush(asid_t asid)
 {
-    asm volatile("sfence.vma x0, %0" :: "r"(asid): "memory");
+    asm volatile("sfence.vma" ::: "memory");
 }
 
 #endif /* end of !ENABLE_SMP_SUPPORT */
