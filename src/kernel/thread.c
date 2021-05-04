@@ -192,7 +192,9 @@ void doReplyTransfer(tcb_t *sender, tcb_t *receiver, cte_t *slot, bool_t grant)
                 current_fault = seL4_Fault_Timeout_new(sc->scBadge);
                 handleTimeout(receiver);
             } else {
-                postpone(sc);
+                if (thread_state_get_tcbInReleaseQueue(receiver->tcbState) == false) {
+                    postpone(sc);
+                }
             }
         }
     }
