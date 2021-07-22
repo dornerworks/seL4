@@ -35,6 +35,6 @@
 		    "serial0",
 		    &{/amba_apu@0/interrupt-controller@f9010000},
 		    &{/timer},
-		    &{/smmu@fd800000};
+		    &{/amba/smmu@fd800000};
     };
 };
