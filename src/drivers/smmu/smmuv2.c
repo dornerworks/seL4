@@ -550,13 +550,13 @@ void smmu_sid_bind_cb(word_t sid, word_t cb)
     reg = S2CR_PRIVCFG_SET(S2CR_PRIVCFG_DEFAULT);
     reg |= S2CR_TYPE_SET(S2CR_TYPE_CB);
     reg |= S2CR_CBNDX_SET(cb);
-    smmu_write_reg32(SMMU_GR0_PPTR, SMMU_S2CRn(sid), reg);
+    smmu_write_reg32(SMMU_GR0_PPTR, SMMU_S2CRn(cb), reg);
     /* The number of stream-to-context mapping
      * is related to the stream indexing method.
      * We currently supports mapping one stream ID to one context bank.*/
     if (smmu_dev_knowledge.stream_match) {
         reg = SMR_VALID_SET(SMR_VALID_EN) | SMR_ID_SET(sid);
-        smmu_write_reg32(SMMU_GR0_PPTR, SMMU_SMRn(sid), reg);
+        smmu_write_reg32(SMMU_GR0_PPTR, SMMU_SMRn(cb), reg);
     }
 }
 
