@@ -99,6 +99,14 @@ config_option(
   "Add support for PCIDs (aka hardware ASIDs). Not all processor models support this feature."
   DEFAULT ON DEPENDS "KernelSel4ArchX86_64" DEFAULT_DISABLED OFF)
 
+config_option(
+    KernelIncreaseTrampolineSize INCREASE_TRAMPOLINE
+    "Increase trampoline code space. Needed for newer Linux kernels, breaks older ones."
+    DEFAULT ON
+    DEPENDS "KernelArchX86"
+    DEFAULT_DISABLED OFF
+)
+
 config_choice(
   KernelSyscall
   KERNEL_X86_SYSCALL
