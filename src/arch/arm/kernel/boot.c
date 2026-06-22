@@ -365,9 +365,9 @@ static BOOT_CODE bool_t try_init_kernel(paddr_t kernel_boot_info_p)
 
     NODE_STATE(boot_cpu_id) = boot_node_id;
 
-    for (volatile uint64_t c = 0; c < (boot_node_id * 0x80000000); c++) {
-        asm volatile("" ::: "memory");
-    }
+    // for (volatile uint64_t c = 0; c < (boot_node_id * 0x80000000); c++) {
+    //     asm volatile("" ::: "memory");
+    // }
 
     printf("kernel boot info addr: 0x%lx\n", kernel_boot_info_p);
 
